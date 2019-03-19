@@ -1,0 +1,8 @@
+{
+  "DryRun": false,
+  "help": false,
+  "sampleRate": 44100,
+  "bitsPerSample": 16,
+  "duration": 1,
+  "Skip": []
+}
