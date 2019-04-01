@@ -5,5 +5,5 @@ var HelpString = "<li class='active'><span>Help</span><a ><img src='../resources
 var EditString = "<li class='active'><span>Edit</span><a href= '../web/MidiEdit.html'><img src='../resources/notebook.png'></a></li>"
 var EndString = "</ul></div></div>"
 
-String = BackString + StartString + HomeString + HelpString + EditString + EndString;
-document.write(String)
+var myString = BackString + StartString + HomeString + HelpString + EditString + EndString;
+document.write(myString)

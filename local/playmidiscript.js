@@ -2,7 +2,7 @@ var audio;
 var play;
 var input = document.getElementById('midi');
 var anchor = document.getElementById('wav');
-
+document.writeln(anchor)
 input.addEventListener('change', function change() {
   // clean up previous song, if any
   if (anchor.hasAttribute('href')) {

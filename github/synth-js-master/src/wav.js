@@ -16,9 +16,36 @@ class WAV {
     const [, tone, octave, accidental] = note.match(re);
 
     // semitone indexed relative to A4 == 69 for compatibility with MIDI
-    const tones = {C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11};
-    const octaves = {'-1': 0, 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 11};
-    const accidentals = {bb: -2, b: -1, '': 0, '#': 1, '##': 2};
+    const tones = {
+      C: 0,
+      D: 2,
+      E: 4,
+      F: 5,
+      G: 7,
+      A: 9,
+      B: 11
+    };
+    const octaves = {
+      '-1': 0,
+      0: 1,
+      1: 2,
+      2: 3,
+      3: 4,
+      4: 5,
+      5: 6,
+      6: 7,
+      7: 8,
+      8: 9,
+      9: 10,
+      10: 11
+    };
+    const accidentals = {
+      bb: -2,
+      b: -1,
+      '': 0,
+      '#': 1,
+      '##': 2
+    };
 
     // if semitone is unrecognized, assume REST
     if (tones[tone] === undefined || octaves[octave] === undefined || accidentals[accidental] === undefined) {
@@ -243,89 +270,89 @@ class WAV {
     var i, d;
 
     switch (bytesPerSample) {
-    case 1:
-      // endianess not relevant for 8-bit encoding
-      for (i = 0; i < samples; i++) {
-        // convert by adding 0x80 instead of 0x100
-        // WAV uses unsigned data for 8-bit encoding
-
-        // [INT8_MIN, INT8_MAX] -> [0, UINT8_MAX]
-        uint8[i] = (data[i] * amplitude + 0x80) & 0xFF;
-      }
-      break;
-    case 2:
-      // LSB first
-      if (this.littleEndian) {
+      case 1:
+        // endianess not relevant for 8-bit encoding
         for (i = 0; i < samples; i++) {
-          // [INT16_MIN, INT16_MAX] -> [0, UINT16_MAX]
-          d = (data[i] * amplitude + 0x10000) & 0xFFFF;
+          // convert by adding 0x80 instead of 0x100
+          // WAV uses unsigned data for 8-bit encoding
 
-          // unwrap inner loop
-          uint8[i * 2    ] = (d      ) & 0xFF;
-          uint8[i * 2 + 1] = (d >>> 8);
+          // [INT8_MIN, INT8_MAX] -> [0, UINT8_MAX]
+          uint8[i] = (data[i] * amplitude + 0x80) & 0xFF;
         }
-      // MSB first
-      } else {
-        for (i = 0; i < samples; i++) {
-          // [INT16_MIN, INT16_MAX] -> [0, UINT16_MAX]
-          d = (data[i] * amplitude + 0x10000) & 0xFFFF;
+        break;
+      case 2:
+        // LSB first
+        if (this.littleEndian) {
+          for (i = 0; i < samples; i++) {
+            // [INT16_MIN, INT16_MAX] -> [0, UINT16_MAX]
+            d = (data[i] * amplitude + 0x10000) & 0xFFFF;
 
-          // unwrap inner loop
-          uint8[i * 2    ] = (d >>> 8);
-          uint8[i * 2 + 1] = (d      ) & 0xFF;
-        }
-      }
-      break;
-    case 3:
-      // LSB first
-      if (this.littleEndian) {
-        for (i = 0; i < samples; i++) {
-          // [INT24_MIN, INT24_MAX] -> [0, UINT24_MAX]
-          d = (data[i] * amplitude + 0x1000000) & 0xFFFFFF;
+            // unwrap inner loop
+            uint8[i * 2] = (d) & 0xFF;
+            uint8[i * 2 + 1] = (d >>> 8);
+          }
+          // MSB first
+        } else {
+          for (i = 0; i < samples; i++) {
+            // [INT16_MIN, INT16_MAX] -> [0, UINT16_MAX]
+            d = (data[i] * amplitude + 0x10000) & 0xFFFF;
 
-          // unwrap inner loop
-          uint8[i * 3    ] = (d       ) & 0xFF;
-          uint8[i * 3 + 1] = (d >>>  8) & 0xFF;
-          uint8[i * 3 + 2] = (d >>> 16);
+            // unwrap inner loop
+            uint8[i * 2] = (d >>> 8);
+            uint8[i * 2 + 1] = (d) & 0xFF;
+          }
         }
-      // MSB first
-      } else {
-        for (i = 0; i < samples; i++) {
-          // [INT24_MIN, INT24_MAX] -> [0, UINT24_MAX]
-          d = (data[i] * amplitude + 0x1000000) & 0xFFFFFF;
+        break;
+      case 3:
+        // LSB first
+        if (this.littleEndian) {
+          for (i = 0; i < samples; i++) {
+            // [INT24_MIN, INT24_MAX] -> [0, UINT24_MAX]
+            d = (data[i] * amplitude + 0x1000000) & 0xFFFFFF;
 
-          // unwrap inner loop
-          uint8[i * 3    ] = (d >>> 16);
-          uint8[i * 3 + 1] = (d >>>  8) & 0xFF;
-          uint8[i * 3 + 2] = (d       ) & 0xFF;
-        }
-      }
-    case 4:
-      // LSB first
-      if (this.littleEndian) {
-        for (i = 0; i < samples; i++) {
-          // [INT32_MIN, INT32_MAX] -> [0, UINT32_MAX]
-          d = (data[i] * amplitude + 0x100000000) & 0xFFFFFFFF;
+            // unwrap inner loop
+            uint8[i * 3] = (d) & 0xFF;
+            uint8[i * 3 + 1] = (d >>> 8) & 0xFF;
+            uint8[i * 3 + 2] = (d >>> 16);
+          }
+          // MSB first
+        } else {
+          for (i = 0; i < samples; i++) {
+            // [INT24_MIN, INT24_MAX] -> [0, UINT24_MAX]
+            d = (data[i] * amplitude + 0x1000000) & 0xFFFFFF;
 
-          // unwrap inner loop
-          uint8[i * 4    ] = (d       ) & 0xFF;
-          uint8[i * 4 + 1] = (d >>>  8) & 0xFF;
-          uint8[i * 4 + 2] = (d >>> 16) & 0xFF;
-          uint8[i * 4 + 3] = (d >>> 24);
+            // unwrap inner loop
+            uint8[i * 3] = (d >>> 16);
+            uint8[i * 3 + 1] = (d >>> 8) & 0xFF;
+            uint8[i * 3 + 2] = (d) & 0xFF;
+          }
         }
-      // MSB first
-      } else {
-        for (i = 0; i < samples; i++) {
-          // [INT32_MIN, INT32_MAX] -> [0, UINT32_MAX]
-          d = (data[i] * amplitude + 0x100000000) & 0xFFFFFFFF;
+      case 4:
+        // LSB first
+        if (this.littleEndian) {
+          for (i = 0; i < samples; i++) {
+            // [INT32_MIN, INT32_MAX] -> [0, UINT32_MAX]
+            d = (data[i] * amplitude + 0x100000000) & 0xFFFFFFFF;
 
-          // unwrap inner loop
-          uint8[i * 4    ] = (d >>> 24);
-          uint8[i * 4 + 1] = (d >>> 16) & 0xFF;
-          uint8[i * 4 + 2] = (d >>>  8) & 0xFF;
-          uint8[i * 4 + 3] = (d       ) & 0xFF;
+            // unwrap inner loop
+            uint8[i * 4] = (d) & 0xFF;
+            uint8[i * 4 + 1] = (d >>> 8) & 0xFF;
+            uint8[i * 4 + 2] = (d >>> 16) & 0xFF;
+            uint8[i * 4 + 3] = (d >>> 24);
+          }
+          // MSB first
+        } else {
+          for (i = 0; i < samples; i++) {
+            // [INT32_MIN, INT32_MAX] -> [0, UINT32_MAX]
+            d = (data[i] * amplitude + 0x100000000) & 0xFFFFFFFF;
+
+            // unwrap inner loop
+            uint8[i * 4] = (d >>> 24);
+            uint8[i * 4 + 1] = (d >>> 16) & 0xFF;
+            uint8[i * 4 + 2] = (d >>> 8) & 0xFF;
+            uint8[i * 4 + 3] = (d) & 0xFF;
+          }
         }
-      }
     }
 
     return buffer;
@@ -336,7 +363,9 @@ class WAV {
   // browser-specific
   // generates blob from concatenated typed arrays
   toBlob() {
-    return new Blob([this.header, this.typedData], {type: 'audio/wav'});
+    return new Blob([this.header, this.typedData], {
+      type: 'audio/wav'
+    });
   }
 
   // Node.js-specific
@@ -355,7 +384,7 @@ class WAV {
   // sets time (in seconds) of pointer
   // zero-fills by default
   seek(time, fill = true) {
-    var data   = this.data;
+    var data = this.data;
     var sample = Math.round(this.SampleRate * time);
 
     this.pointer = this.NumChannels * sample;
@@ -378,7 +407,11 @@ class WAV {
   // to channels listed (or all by default)
   // adds to existing data by default
   // and does not reset write index after operation by default
-  writeNote({note, time, amplitude = 1}, channels = [], blend = true, reset = false) {
+  writeNote({
+    note,
+    time,
+    amplitude = 1
+  }, channels = [], blend = true, reset = false) {
     // creating local references to properties
     var data = this.data;
     var numChannels = this.NumChannels;
@@ -481,7 +514,12 @@ class WAV {
     var start = this.pointer;
 
     for (var i = 0, note, time, amp, off, secs, rest; i < notes.length; i++) {
-      ({note, time, amplitude: amp, offset: off} = notes[i]);
+      ({
+        note,
+        time,
+        amplitude: amp,
+        offset: off
+      } = notes[i]);
 
       // for asynchronous progression
       if (off !== undefined) {
@@ -489,13 +527,24 @@ class WAV {
       }
 
       if (relativeDuration === 1 || note === 'REST') {
-        this.writeNote({note, time, amplitude: amp === undefined ? amplitude : amp * amplitude}, channels, blend, false);
+        this.writeNote({
+          note,
+          time,
+          amplitude: amp === undefined ? amplitude : amp * amplitude
+        }, channels, blend, false);
       } else {
         secs = time * relativeDuration;
         rest = time - secs;
 
-        this.writeNote({note: note, time: secs, amplitude: amp === undefined ? amplitude : amp * amplitude}, channels, blend, false);
-        this.writeNote({note: 'REST', time: rest}, channels, blend, false);
+        this.writeNote({
+          note: note,
+          time: secs,
+          amplitude: amp === undefined ? amplitude : amp * amplitude
+        }, channels, blend, false);
+        this.writeNote({
+          note: 'REST',
+          time: rest
+        }, channels, blend, false);
       }
     }
 
