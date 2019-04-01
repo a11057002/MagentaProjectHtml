@@ -1,52 +1,76 @@
 <html>
+<script src="../local/jquery.js"></script>
+<link rel="stylesheet" type="text/css" href="../local/MidiEdit.css">
+<script type="text/javascript">
+  var note = new Array("B","A#", "A","G#", "G","F#", "F", "E","D#", "D","C#", "C");
 
-<style type="text/css">
-  body
-  {
-    color:white;
-    background-color:rgba(0,0,0,1);
+  function createTable() {
+
+    var table = document.getElementById("mytable");
+    var notetable = document.getElementById("mynote");
+    var row = table.rows.length;
+    var i,color,count=6;
+
+    for (i = 0; i < 48; i++) {
+
+      if ((i % 12 == 1) || (i % 12 == 3) || (i % 12 == 5) || (i % 12 == 8) || (i % 12 == 10))
+        color = "black";
+      else
+        color = "white";
+
+      notetable.innerHTML += "<tr><th class='"+ color+"'>" +note[i%12] +count +"</th></tr>";
+        table.innerHTML += "<tr class='tt' name='note"+i+"'><td></td><td></td><td></td><td></td><td></td><td>"+
+       "</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+
+    if(i%12==0)count--;
+    }
+    start();
   }
-</style>
-<body>
-  <div>
-<table  border="1%" style="width:100%;height10%;">
 
-  <tr>
-      <td>C5</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td><td></td>
-      
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  <tr>
-      <td>C</td>
-  </tr>
-  </table>
-  </div>
-</body>
+   function start()
+  {
+    var table = document.getElementById("mytable");
+    var col = table.rows[0].cells.length;
+
+     $('.tt td').on('mousedown',function(){
+       if(col-$(this).index()<=4)
+       {
+        add();
+        col = table.rows[0].cells.length;
+       }
+       if($(this).attr('class') == "highlighted")
+        $(this).removeClass("highlighted");
+       else
+        $(this).addClass("highlighted");
+        return false;
+     })
+  }
+
+  function add()
+  {
+    $(".tt").append("<td></td><td></td><td></td><td></td>");
+    $('.tt td').off('mousedown');
+    start();
+  }
+</script>
 <script src="../local/bar.js"></script>
+<body onload="createTable()">
+
+  <div style="overflow-x:hidden;overflow-y: auto;position:absolute; height:84%; width:99%;top:5%;">
+    <table>
+      <td style="width: 10%">
+          <table class="notec" style="width:100%;" id="mynote">
+          </table>
+      </td>
+
+      <td style="position:absolute;  left:10%; width: 90%">
+        <div style="overflow-x:auto;overflow-y: hidden;width:100%;">
+            <table class="notec" style="width: 100%;height: 50%; z-index:1;"id="mytable">
+            </table>
+        </div>
+      </td>
+     </table>
+  </div>
+
+</body>
 </html>

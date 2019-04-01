@@ -1,4 +1,4 @@
-"use strict";
+  "use strict";
 var canvas = document.getElementById('canvas'),
   ctx = canvas.getContext('2d'),
   w = canvas.width = window.innerWidth + 17,
