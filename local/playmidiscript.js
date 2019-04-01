@@ -2,7 +2,7 @@ var audio;
 var play;
 var input = document.getElementById('midi');
 var anchor = document.getElementById('wav');
-document.writeln(anchor)
+
 input.addEventListener('change', function change() {
   // clean up previous song, if any
   if (anchor.hasAttribute('href')) {
@@ -29,9 +29,8 @@ input.addEventListener('change', function change() {
       var src = URL.createObjectURL(wav);
 
       audio = new Audio(src);
-      audio.play();
-      play = true;
-      document.getElementById("button").innerHTML = "Pause";
+
+      play = false;
       anchor.setAttribute('href', src);
     });
 
