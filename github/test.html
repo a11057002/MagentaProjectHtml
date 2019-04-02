@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MIDI Player Test</title>
+<script src="./JZZ-master/javascript/JZZ.js"></script>
+<script src="./jZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
+<script src="./JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
+<!-- <script src="./JZZ-input-Kbd-master/javascript/JZZ.input.Kbd.js"></script> -->
+<script src="./JZZ-gui-Player-master/javascript/JZZ.gui.Player.js"></script>
+</head>
+
+<body>
+
+<!-- <h1>MIDI Player</h1>
+<div id=player></div> -->
+<!-- <div id=piano0></div>
+<div id=piano1></div>
+<div id=piano2></div>
+<div id=piano3></div>
+<div id=piano4></div>
+<div id=piano5></div>
+<div id=piano6></div>
+<div id=piano7></div>
+<div id=piano8></div>
+<div id=piano9></div>
+<div id=pianoa></div>
+<div id=pianob></div>
+<div id=pianoc></div>
+<div id=pianod></div>
+<div id=pianoe></div>
+<div id=pianof></div> -->
+
+<script><!--
+JZZ.synth.Tiny.register('Web Audio');
+//var piano0 = JZZ.input.Kbd({chan: 0, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano1 = JZZ.input.Kbd({chan: 1, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano2 = JZZ.input.Kbd({chan: 2, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano3 = JZZ.input.Kbd({chan: 3, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano4 = JZZ.input.Kbd({chan: 4, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano5 = JZZ.input.Kbd({chan: 5, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano6 = JZZ.input.Kbd({chan: 6, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano7 = JZZ.input.Kbd({chan: 7, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano8 = JZZ.input.Kbd({chan: 8, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var piano9 = JZZ.input.Kbd({chan: 9, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var pianoa = JZZ.input.Kbd({chan: 10, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var pianob = JZZ.input.Kbd({chan: 11, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var pianoc = JZZ.input.Kbd({chan: 12, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var pianod = JZZ.input.Kbd({chan: 13, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var pianoe = JZZ.input.Kbd({chan: 14, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+//var pianof = JZZ.input.Kbd({chan: 1   5, from: 'C4', to: 'E7', wl: 24, ww: 12, bl: 15, bw: 8});
+// var out = JZZ().openMidiOut();
+ //piano0.connect(out);
+// piano1.connect(piano2);
+// piano2.connect(piano3);
+// piano3.connect(piano4);
+// piano4.connect(piano5);
+// piano5.connect(piano6);
+// piano6.connect(piano7);
+// piano7.connect(piano8);
+// piano8.connect(piano9);
+// piano9.connect(pianoa);
+// pianoa.connect(pianob);
+// pianob.connect(pianoc);
+// pianoc.connect(pianod);
+// pianod.connect(pianoe);
+// pianoe.connect(pianof);
+//pianof.connect(out);
+
+// var smf = new JZZ.MIDI.SMF();
+var player1 = new JZZ.gui.Player({at: 'player', midi: false, file: true });
+--></script>
+
+</body>
+</html>

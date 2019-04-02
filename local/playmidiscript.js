@@ -28,9 +28,10 @@ input.addEventListener('change', function change() {
       // create a temporary URL to the wav file
       var src = URL.createObjectURL(wav);
 
-      audio = new Audio(src);
-
-      play = false;
+      // audio = new Audio(src);
+      //
+      // play = false;
+      anchor.innerHTML = " ";
       anchor.setAttribute('href', src);
     });
 
@@ -42,20 +43,20 @@ input.addEventListener('change', function change() {
   }
 });
 
-function Play() {
-  if (play == true) {
-    audio.pause();
-    play = false;
-    document.getElementById("button").innerHTML = "Play";
-  } else {
-    audio.play();
-    play = true;
-    document.getElementById("button").innerHTML = "Pause";
-  }
-}
-
-function Stop() {
-  audio.pause();
-  audio.currentTime = 0;
-  document.getElementById("button").innerHTML = "Play";
-}
+// function Play() {
+//   if (play == true) {
+//     audio.pause();
+//     play = false;
+//     document.getElementById("button").innerHTML = "Play";
+//   } else {
+//     audio.play();
+//     play = true;
+//     document.getElementById("button").innerHTML = "Pause";
+//   }
+// }
+//
+// function Stop() {
+//   audio.pause();
+//   audio.currentTime = 0;
+//   document.getElementById("button").innerHTML = "Play";
+// }

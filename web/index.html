@@ -1,7 +1,12 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<script src="../local/synth.min.js">
-</script>
+<script src="../local/synth.min.js"></script>
+<script src="../github/JZZ-master/javascript/JZZ.js"></script>
+<script src="../github/jZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
+<script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
+<!-- <script src="./JZZ-input-Kbd-master/javascript/JZZ.input.Kbd.js"></script> -->
+<script src="../github/JZZ-gui-Player-master/javascript/JZZ.gui.Player.js"></script>
+
 <style type="text/css">
   body {
     color: white;
@@ -14,12 +19,16 @@
   }
   #wav:after
       {
+        color:lightblue;
         content: " " attr(download);
+        text-decoration:none;
       }
   #wav:not([href])
       {
-        display: none;
+
+        /* display: none; */
       }
+
 </style>
 <Title>
   音樂製作
@@ -31,13 +40,19 @@
     <div style="width:99%;height:20%;">
       <span style="font-size:3em">音樂產生器</span>
       <br><br>
-      <input type="file" id="midi" accept="audio/midi">
-      <button type="button" id="button" onclick="Play()">Play</button>
-      <button type="button" id="button" onclick="Stop()">Stop</button>
+
+            <script>
+
+            JZZ.synth.Tiny.register('Web Audio');
+            var player1 = new JZZ.gui.Player({at: 'player', midi: false , file :true});
+            </script>
+      <!-- <button type="button" id="button" onclick="Play()">Play</button>
+      <button type="button" id="button" onclick="Stop()">Stop</button> -->
       <br><br>
-      <a id="wav">Download</a>
+      <a id="wav">'檔案下載位置'</a>
+
       <script src="../local/playmidiscript.js">
-      </script>       <!--播放控制-->
+      </script>
    </div>
 
 
