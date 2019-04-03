@@ -31,7 +31,7 @@ input.addEventListener('change', function change() {
       // audio = new Audio(src);
       //
       // play = false;
-      anchor.innerHTML = " ";
+      anchor.innerHTML = "  ";
       anchor.setAttribute('href', src);
     });
 
