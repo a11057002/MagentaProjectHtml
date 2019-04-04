@@ -73,7 +73,6 @@
 
   function _createGUI(self, arg) {
     self.gui = document.createElement('div');
-    self.gui.style.position = 'absolute';
     self.gui.style.backgroundColor = '#8884';
     self.gui.style.width = '270px';
     self.gui.style.height = '40px';
@@ -137,7 +136,7 @@
       self.gui.appendChild(self.midiBtn.div);
 
       self.sel = document.createElement('select');
-      self.sel.style.position = 'absolute';
+      self.sel.style.position = 'relative';
       self.sel.style.top = '30px';
       self.sel.style.left = '40px';
       self.sel.style.width = '230px';
@@ -208,7 +207,7 @@
     if (arg.close) {
       self.closeBtn = document.createElement('div');
       self.closeBtn.style.display = 'inline-block';
-      self.closeBtn.style.position = 'absolute';
+      self.closeBtn.style.position = 'relative';
       self.closeBtn.style.boxSizing = 'content-box';
       self.closeBtn.style.top = '1px';
       self.closeBtn.style.left = '262px';
@@ -320,9 +319,9 @@
       arg.y = _floating * 45 + 5;
       _floating++;
     }
-    this.gui.style.position = 'fixed';
-    this.gui.style.top = 200 + 'px';
-    this.gui.style.left = 700 + 'px';
+    // this.gui.style.position = 'fixed';
+    this.gui.style.top = 25 + '%';
+    this.gui.style.left = 42 + "%";
     this.gui.style.opacity = 0.9;
     var self = this;
     this.gui.addEventListener('mousedown', function(e) {

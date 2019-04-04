@@ -1,10 +1,11 @@
 body {
-    color: white;
+    color: rgba(255,255,255,0.05);
     background-color: rgba(0, 0, 0, 1);
   }
 
   .notec td {
     border: 2px;
+    border-radius: 10px;
     border-style: solid;
     padding: 2px;
     width: 5em;
@@ -19,11 +20,10 @@ body {
   }
 
   .notec th {
-    border: 2px;
-    border-style: solid;
+    border-radius: 10px;
     padding: 2px;
     width: 5em;
-    height: 1em;
+    height: 24px;
   }
 
   th.white {
@@ -54,5 +54,5 @@ body {
      color:white;
   }
   .highlighted {
-      background-color:red;
+      background-color:rgb(60,0,220);
   }
