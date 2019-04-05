@@ -1,8 +1,8 @@
   "use strict";
   var canvas = document.getElementById('canvas'),
     ctx = canvas.getContext('2d'),
-    w = canvas.width = window.innerWidth * 1,
-    h = canvas.height = window.innerHeight + 10,
+    w = canvas.width = screen.width,
+    h = canvas.height = screen.height,
     hue = 217,
     stars = [],
     count = 0,

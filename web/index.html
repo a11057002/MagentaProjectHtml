@@ -1,5 +1,6 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="../local/jquery.js"></script>
 <script src="../local/synth.min.js"></script>
 <script src="../github/JZZ-master/javascript/JZZ.js"></script>
 <script src="../github/JZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
@@ -21,14 +22,11 @@
       {
         color:lightblue;
         content: " " attr(download);
-        text-decoration:none;
       }
-  #wav:not([href])
+  /* #wav:not([href])
       {
 
-        /* display: none; */
-      }
-
+      } */
 </style>
 <Title>
   音樂製作
@@ -45,8 +43,6 @@
             JZZ.synth.Tiny.register('Web Audio');
             var player1 = new JZZ.gui.Player({at: 'player', midi: false , file :true});
             </script>
-      <!-- <button type="button" id="button" onclick="Play()">Play</button>
-      <button type="button" id="button" onclick="Stop()">Stop</button> -->
       <br><br>
       <a id="wav">'檔案下載位置'</a>
 
