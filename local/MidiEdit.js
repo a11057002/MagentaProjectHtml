@@ -3,9 +3,9 @@ JZZ.synth.Tiny.register('Web Audio');
 var note = new Array("B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"); //音符陣列
 var noteColArray = new Array();
 var table = document.getElementById("mytable");
-var string = "";
 var btn = document.getElementById("btn");
 var btn2 = document.getElementById('btn2');
+var string = "";
 var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!'));
 var player;
 var playing = false;
@@ -53,11 +53,18 @@ function createTable() //製作table
 }
 
 
-function start() //觸發點擊事件
+function start() //開始設置  觸發點擊事件
 {
   var table = document.getElementById("mytable");
   var col = table.rows[0].cells.length;
   var tempnote;
+  document.getElementById("tools").innerHTML += '<object src=' + uri + ' autostart=true>';
+  smf.push(trk0);
+  smf.push(trk1);
+  trk0.smfBPM(120);
+  str = smf.dump();
+  b64 = JZZ.lib.toBase64(str);
+  uri = 'data:audio/midi;base64,' + b64;
   $('.tt td').on('mousedown', function() {
     playnote($(this).parent().attr("name"));
     tempnote = $(this).parent().attr("name");
@@ -74,11 +81,10 @@ function start() //觸發點擊事件
     }
     if ($(this).attr('class') == "highlighted") {
       $(this).removeClass("highlighted");
-      console.log(noteColArray[$(this).index()].indexOf('.note'));
+      console.log(noteColArray[$(this).index()].indexOf('.note(' + $(this).parent().attr("name") + ')'));
     } else {
       $(this).addClass("highlighted");
-      // string =string+ ".tick(100).note("+$(this).parent().attr("name")+",100,50)";
-      noteColArray[$(this).index()] += ".note(" + $(this).parent().attr("name") + ",100,50)";
+      noteColArray[$(this).index()] += ".note(" + $(this).parent().attr("name") + ",100,50)"; //將音符加入array
     }
     var i = 0;
     string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
@@ -104,19 +110,12 @@ function add() //增加表格
   start();
 }
 
-function report(s) {
+function report(s) { //錯誤呼叫
   return function() {};
 }
 
-document.getElementById("tools").innerHTML += '<object src=' + uri + ' autostart=true>';
-smf.push(trk0);
-smf.push(trk1);
-trk0.smfBPM(120);
-str = smf.dump(); // MIDI file dumped as a string
-b64 = JZZ.lib.toBase64(str); // convert to base-64 string
-uri = 'data:audio/midi;base64,' + b64; // data URI
 
-function createSMF() {
+function createSMF() { //建立音樂
   if (count == 0) {
     $('#script0').remove();
     $("body").append("<script id='script1'>" + string + ".tick(100).smfEndOfTrack();</script\>");
@@ -131,14 +130,14 @@ function createSMF() {
   // uri = 'data:audio/midi;base64,' + b64; // data URI
 }
 
-function clear() {
+function clear() { //清除目前
   if (player) player.stop();
   playing = false;
   btn.innerHTML = 'Play';
   btn.disabled = true;
 }
 
-function load(data, name) {
+function load(data, name) { //播放偵測
   try {
     player = JZZ.MIDI.SMF(data).player();
     player.connect(tools);
@@ -155,14 +154,14 @@ function load(data, name) {
   }
 }
 
-function playStop() {
+function playStop() { //停止播放
   player.stop();
   playing = false;
   btn.innerHTML = "Play";
 
 }
 
-function fromBase64() {
+function fromBase64() { //轉為b64格式
   clear();
   createSMF();
   load(JZZ.lib.fromBase64(b64), 'Base64 data');
