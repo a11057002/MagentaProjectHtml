@@ -15,7 +15,6 @@ body {
   table {
     border-collapse: collapse;
     text-align: right;
-    width: 90%;
     table-layout: fixed;
   }
 
