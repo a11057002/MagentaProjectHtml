@@ -6,26 +6,33 @@ var table = document.getElementById("mytable");
 var string = "";
 var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!'));
 var player;
+var noteArray = new Array();
+var noteTotal = 0;
 var playing = false;
 var smf = new JZZ.MIDI.SMF(1, 96);
 var trk0 = new JZZ.MIDI.SMF.MTrk();
 var trk1 = new JZZ.MIDI.SMF.MTrk();
 var b64, str, uri, count = 0;
 var table = document.getElementById("mytable");
+var dragNote = function(alphabet, length, power) {
+  this.alphbet = alphabet;
+  this.length = length;
+  this.power = power;
+}
 
 var port = JZZ().openMidiOut().or(function() {
   alert('Cannot open MIDI port!');
 });
 
 
-function playnote(id)    //播放單音
-{ 
+function playnote(id) //播放單音
+{
   port.send([0x90, id, 100]);
 }
 
 
 function stopnote(id) //停止單音
-{ 
+{
   port.send([0x80, id, 0]);
 }
 
@@ -49,12 +56,11 @@ function createTable() //製作table
   var i = 0;
   $.each(table.rows[0].cells, function() {
     var j = 0
-      noteColArray[i] = new Array();
-     $.each(table.rows, function()
-     {
+    noteColArray[i] = new Array();
+    $.each(table.rows, function() {
       noteColArray[i][j] = new Array();
       j++;
-     });
+    });
     i++;
   });
   console.log(noteColArray);
@@ -75,10 +81,9 @@ function add() //增加表格
   start();
 }
 
-function clickcontrol()
-{
-   var col = table.rows[0].cells.length;
-   var tempnote;
+function clickcontrol() {
+  var col = table.rows[0].cells.length;
+  var tempnote;
   $('.tt td').on('mousedown', function() {
     playnote($(this).parent().attr("name"));
     tempnote = $(this).parent().attr("name");
@@ -87,12 +92,10 @@ function clickcontrol()
       add();
       col = table.rows[0].cells.length;
       var i = 0;
-      while (i < 4) 
-      {
-        var j=0;
+      while (i < 4) {
+        var j = 0;
         noteColArray[i + temp] = new Array();
-        while(j < table.rows.length)
-        {
+        while (j < table.rows.length) {
           noteColArray[i + temp][j] = new Array();
           j++;
         }
@@ -101,13 +104,18 @@ function clickcontrol()
       }
     }
     if ($(this).attr('class') == "highlighted") {
-      $(this).removeClass("highlighted"); 
+      $(this).removeClass("highlighted");
+      $(this).removeAttr('draggable', 'false');
       var number = -$(this).parent().attr("name") + 95;
-       noteColArray[$(this).index()][number] = new Array(); //將音符刪除array
+      noteColArray[$(this).index()][number] = new Array(); //將音符刪除array
     } else {
+      noteArray[noteTotal] = new dragNote($(this).parent().attr("name"), 50, 100);
+      console.log(noteArray);
+      noteTotal++;
       $(this).addClass("highlighted");
+      $(this).attr('draggable', 'true');
       var number = -$(this).parent().attr("name") + 95;
-       noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",100,50)"; //將音符加入array
+      noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",100,50)"; //將音符加入array
     }
 
     addnote();
@@ -118,34 +126,32 @@ function clickcontrol()
   });
 }
 
-function addnote()
-{
-    var i = 0;
-    string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
-    $.each(table.rows[0].cells, function() {
-      var j=0;
-      string += ".tick(100)";
-      $.each(table.rows, function()
-       {
-            string += noteColArray[i][j];
-            j++;
-       });
-      
-      i++;
+function addnote() {
+  var i = 0;
+  string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
+  $.each(table.rows[0].cells, function() {
+    var j = 0;
+    string += ".tick(100)";
+    $.each(table.rows, function() {
+      string += noteColArray[i][j];
+      j++;
     });
-    console.log(string);
-    console.log(noteColArray);
+
+    i++;
+  });
+  console.log(string);
+  console.log(noteColArray);
 
 }
 
 function report(s) //錯誤呼叫
-{ 
+{
   return function() {};
 }
 
 
 function createSMF() //建立音樂
-{ 
+{
   smf = new JZZ.MIDI.SMF(1, 96);
   trk0 = new JZZ.MIDI.SMF.MTrk();
   trk1 = new JZZ.MIDI.SMF.MTrk();
@@ -162,7 +168,7 @@ function createSMF() //建立音樂
     $("body").append("<script id='script0'>" + string + ".tick(100).smfEndOfTrack();</script\>");
     count = 0;
   }
-  
+
   trk0.smfBPM(120);
   console.log(smf);
   var smftemp = smf;
@@ -175,13 +181,13 @@ function createSMF() //建立音樂
 }
 
 function clear() //清除目前
-{ 
+{
   if (player) player.stop();
   playing = false;
 }
 
 function load(data, name) //播放偵測
- { 
+{
 
   try {
     player = JZZ.MIDI.SMF(data).player();
@@ -198,15 +204,20 @@ function load(data, name) //播放偵測
 }
 
 function playStop() //停止播放
-{ 
+{
   player.stop();
   playing = false;
 }
 
 function fromBase64() //轉為b64格式
-{ 
+{
 
   clear();
   createSMF();
   load(JZZ.lib.fromBase64(b64), 'Base64 data');
+}
+
+function dragNote() {
+  console.log("dragStart");
+
 }
