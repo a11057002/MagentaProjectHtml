@@ -24,6 +24,9 @@ var port = JZZ().openMidiOut().or(function() {
   alert('Cannot open MIDI port!');
 });
 
+var runBtn = document.getElementById("runBtn");
+var stopBtn = document.getElementById("stopBtn");
+stopBtn.disabled=true;
 
 function playnote(id) //播放單音
 {
@@ -221,3 +224,47 @@ function dragNote() {
   console.log("dragStart");
 
 }
+
+/*
+  進度條
+  */
+  function run(){ 
+   var clientWidth = document.body.clientWidth;//取得螢幕寬度
+   //alert(runBtn.value);
+    var playHead = document.getElementById("playHead");   
+    var pos = getPositionX(playHead)/clientWidth*100;
+    //alert("X: " + pos + "%");
+    var id = setInterval(frame);
+    playHead.style.display="block";
+    runBtn.disabled=true;
+    stopBtn.disabled=false;
+    function frame() {
+        var val = document.getElementsByName("BPM_val")[0].value;
+        //alert(val);
+        if(pos >= 100){
+          clearInterval(id);
+          pos=0;
+          playHead.style.left = pos + "%";
+          playHead.style.display="none";
+          runBtn.disabled=false;
+          stopBtn.disabled=true;
+        }
+        else if(stopBtn.disabled==false){
+          pos+=(val/100);
+          playHead.style.left = pos + "%"; 
+        }
+        stopBtn.addEventListener("click",function(){
+            clearInterval(id);
+            stopBtn.disabled=true;
+            runBtn.disabled=false;
+        });
+    }
+  }
+  function getPositionX (element) {
+    var x = 0;
+    while ( element ) {
+      x += element.offsetLeft - element.scrollLeft + element.clientLeft;
+      element = element.offsetParent;
+    }
+    return x;
+  } 

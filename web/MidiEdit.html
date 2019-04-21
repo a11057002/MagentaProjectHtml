@@ -1,11 +1,17 @@
 <html>
 <script src="../local/jquery.js"></script>
 <link rel="stylesheet" type="text/css" href="../local/MidiEdit.css">
+<link rel="stylesheet" type="text/css" href="../local/playHead.css">
 <script src="../github/JZZ-master/javascript/JZZ.js"></script>
 <script src="../github/JZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
 <script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
 <script src="../local/bar.js"></script>
 <body onload="createTable()">
+   <div style="position:relative;">
+    <b style="color:white;">Speed:</b><input type="text" name="BPM_val" style="width:50px" value="10">
+    <input id="runBtn" type="button" value="Run" onclick="run()">
+    <input id="stopBtn" type="button" value="Stop">
+  </div>
   <div style="color:white; position:absolute; top:5%" id=tools><button id="btn2" onclick="fromBase64()">Play</button><button  onclick="playStop()" id="btn">Stop</button>
   </div>
   <div style="overflow-x:hidden;overflow-y:auto;position:relative; height:84%;top:7%;">
@@ -17,6 +23,7 @@
       <td style="position:relative; attachment:fixed; left:5%;">
         <div style="overflow-y:hidden;width:100%;">
           <table class="notec" style=" width:100%;height: 50%;" id="mytable">
+            <div id="playHead"></div>
           </table>
         </div>
       </td>

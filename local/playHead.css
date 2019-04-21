@@ -1,0 +1,9 @@
+#playHead {
+  display: none;
+  z-index: 3;
+  width: 0.5%;
+  height: 98%;
+  position: absolute;
+  left:0%;
+  background-color: rgb(60,0,220);
+}
