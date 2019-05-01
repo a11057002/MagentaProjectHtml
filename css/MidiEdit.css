@@ -1,0 +1,84 @@
+body {
+    color: rgba(255,255,255,0.05);
+    background-color: rgba(0, 0, 0, 1);
+  }
+
+  table {
+    border-collapse: collapse;
+    text-align: right;
+    table-layout: fixed;
+  }
+
+  .notec td {
+    border: 2px;
+    border-radius: 10px;
+    border-style: solid;
+    padding: 2px;
+    width: 2.5em;
+    height:1em;
+  }
+  #eight_td{
+    border: 2px;
+    border-radius: 10px;
+    border-style: solid;
+    border-right:3px gray solid;
+    padding: 2px;
+    width: 2.5em;
+    height:1.6em;
+  }
+  .notec th {
+    border-radius: 10px;
+    padding: 2px;
+    width: 2.5em;
+    height: 1.6em;
+  }
+
+  th.white {
+    width: 100%;
+    color: black;
+    border-color: lightblue;
+    background-color: white;
+  }
+
+  th.black {
+    width: 100%;
+    color: white;
+    border-color: lightblue;
+    background-color: black;
+  }
+  .notec tr td:hover
+  {
+   background-color: lightblue;
+  }
+  .notec tr:hover{
+    background-color:rgba(100,100,100,0.3);
+  }
+  th.black:hover{
+    background-color: blue;
+  }
+  th.white:hover{
+    background-color: blue;
+    color:white;
+  }
+  .highlighted {
+    background-color:rgb(60,0,220);
+  }
+
+.tool-btn{
+  background-color: white;
+  color:black;
+  box-shadow: 0px 0px 3px rgba(255,255,150,0.5);
+  text-shadow: 0px 0px 3px rgba(255,255,150,0.5);
+}
+.tool-btn:hover {
+  background-color: white;
+  color:black;
+  box-shadow: 0px 0px 3px rgba(255,255,150,1);
+  text-shadow: 0px 0px 3px rgba(255,255,150,1);
+}
+.tool-btn:disabled{
+  background-color:black;
+  color:white;
+  box-shadow: 0px 0px 3px rgba(100,100,100,0.5);
+  text-shadow: 0px 0px 3px rgba(100,100,100,0.5);
+}

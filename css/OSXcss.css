@@ -21,11 +21,11 @@
 
   /* Dock styles */
 
-  div.cap { display: block; height: 100px; width: 40px; background: url(..\/resources/dock-background-left.png) bottom left no-repeat; }
+  div.cap { display: block; height: 100px; width: 40px; background: url(../resources/dock-background-left.png) bottom left no-repeat; }
 
 		div.cap.left { position: absolute; bottom: 0px; left: 0px; }
 		div.cap.right { background-position: right bottom; position: absolute; top: 0px; right: 0px; }
-		ul.osx-dock { display: inline-block; height: 130px; padding: 0 40px 0 0; background: url(..\/resources/dock-background-left.png) no-repeat right bottom; overflow: hidden; margin: 0 0 0 40px; }
+		ul.osx-dock { display: inline-block; height: 130px; padding: 0 40px 0 0; background: url(../resources/dock-background-left.png) no-repeat right bottom; overflow: hidden; margin: 0 0 0 40px; }
 		ul.osx-dock li { display: block; position: relative; float: left; width: 50px; height: 50px; margin: 40px 0 4px 0; -webkit-transition: 0.15s linear; -webkit-transition-property: -webkit-transform margin; text-align: center; }
 
 		ul.osx-dock li a { display: block; height: 50px; padding: 0 1px; -webkit-transition: 0.15s linear; -webkit-transition-property: -webkit-transform margin; margin: 0;
