@@ -7,11 +7,13 @@
 <script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
 <script src="../js/bar.js"></script>
 <body onload="createTable()">
-  <div style="color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
+  <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
     <b style="color:white; float:left;">Speed:</b><input type="text" name="BPM_val" style="width:50px; float:left;" value="50">
     <input class="tool-btn" id="btn" type="button" value="Play" onclick="fromBase64()">
     <input class="tool-btn" id="btn2" type="button" value="Pause" onclick="playPause()">
     <input class="tool-btn" id="btn3" type="button" value="Rerun" onclick="playRerun()">
+    <input class="tool-btn" id="export" type="button" value="匯出" onclick="exportMidi()">
+    
   </div>
   <div style="overflow-x:hidden;overflow-y:auto;position:fixed; height:84%;top:7%;">
     <table style="width:100%">

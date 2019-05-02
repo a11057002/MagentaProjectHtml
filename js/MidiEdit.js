@@ -22,6 +22,7 @@ var dragNote = function(alphabet, power, length) {
 var playnotebtn = document.getElementById("btn");
 var pausenotebtn = document.getElementById("btn2");
 var rerunnotebtn = document.getElementById("btn3");
+
 var val;
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
@@ -249,8 +250,13 @@ function fromBase64() //轉為b64格式
 
 function dragNote() {
   // console.log("dragStart");
-
 }
+
+function exportMidi() {
+  var uri = 'data:audio/midi;base64,' + b64;
+  location.href = uri;
+}
+
 
 /*
   進度條
