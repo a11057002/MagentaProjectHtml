@@ -192,15 +192,15 @@
           self.fileBtn.off();
           self.readFile(e.dataTransfer.files[0]);
         });
-        self.gui.addEventListener('dragover', function(e) {
-          _stopProp(e);
-          self.fileBtn.on();
-          e.dataTransfer.dropEffect = 'copy';
-        });
-        self.gui.addEventListener('dragexit', function(e) {
-          _stopProp(e);
-          self.fileBtn.off();
-        });
+        // self.gui.addEventListener('dragover', function(e) {
+        //   _stopProp(e);
+        //   self.fileBtn.on();
+        //   e.dataTransfer.dropEffect = 'copy';
+        // });
+        // self.gui.addEventListener('dragexit', function(e) {
+        //   _stopProp(e);
+        //   self.fileBtn.off();
+        // });
       }
     } else self.fileBtn = _noBtn;
 
@@ -262,8 +262,8 @@
       self._mousedown(e);
     });
     self.rail.appendChild(self.caret);
-
-    window.addEventListener('mousemove', function(e) {
+    //
+    self.caret.addEventListener('mousemove', function(e) {
       self._mousemove(e);
     });
     window.addEventListener('mouseup', function(e) {
