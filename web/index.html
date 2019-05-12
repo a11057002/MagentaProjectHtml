@@ -5,7 +5,6 @@
 <script src="../github/JZZ-master/javascript/JZZ.js"></script>
 <script src="../github/JZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
 <script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
-<!-- <script src="./JZZ-input-Kbd-master/javascript/JZZ.input.Kbd.js"></script> -->
 <script src="../github/JZZ-gui-Player-master/javascript/JZZ.gui.Player.js"></script>
 
 <style type="text/css">
@@ -23,10 +22,6 @@
         color:lightblue;
         content: " " attr(download);
       }
-  /* #wav:not([href])
-      {
-
-      } */
 </style>
 <Title>
   音樂製作
@@ -38,7 +33,6 @@
     <div style="width:99%;height:20%;">
       <span style="font-size:3em">音樂產生器</span>
       <br><br>
-
             <script>
             JZZ.synth.Tiny.register('Web Audio');
             var player1 = new JZZ.gui.Player({at: 'player', midi: false , file :true});
@@ -48,6 +42,8 @@
 
       <script src="../js/playmidiscript.js">
       </script>
+      <p><input type=file id=file size=80 onchange='fromFile()'></p>
+      <p><button id='btn' onclick='playStop()' disabled>Play</button></p>
    </div>
 
 

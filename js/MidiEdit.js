@@ -59,7 +59,7 @@ function createTable() //製作table
     else
       color = "white";
     noteTable.innerHTML += "<tr  id=" + (95 - i) + " onmousedown='playnote(this.id)'; onmouseup='stopnote(this.id)';><th class='" + color + "'>" + note[i % 12] + count + "</th></tr>"; //C3->60 D3->61
-    table.innerHTML += "<tr class='tt' name='" + (95 - i) + "'><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></tr>";
+    table.innerHTML += "<tr class='tt' name='" + (95 - i) + "'><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
     if (i % 12 == 0) count--;
   }
 
@@ -86,7 +86,7 @@ function start() //開始設置  觸發點擊事件
 
 function add() //增加表格
 {
-  $(".tt").append("<td  id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>");
+  $(".tt").append("<td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>");
   $('.tt td').off('mousedown');
   start();
 }
@@ -125,7 +125,7 @@ function clickcontrol() {
       $(this).addClass("highlighted");
       $(this).attr('draggable', 'true');
       var number = -$(this).parent().attr("name") + 95;
-      noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",100,50)"; //將音符加入array
+      noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",96,100)"; //將音符加入array
     }
 
     addnote();
@@ -150,7 +150,7 @@ function addnote() {
 
     i++;
   });
-  // console.log(string);
+  console.log(string);
   console.log(noteColArray);
 
 }
@@ -185,11 +185,12 @@ function createSMF() //建立音樂
   // console.log(smf);
   var smftemp = smf;
   str = smftemp.dump(); // MIDI file dumped as a string
-  b64 = JZZ.lib.toBase64(str); // convert to base-64 string
-  // console.log(string);
-  // console.log(str);
-  // console.log(b64);
 
+  b64 = JZZ.lib.toBase64(str); // convert to base-64 string
+  console.log(smftemp);
+  console.log("str= " + str);
+  console.log(str.length);
+  console.log(b64);
 }
 
 function clear() //清除目前
@@ -246,6 +247,7 @@ function fromBase64() //轉為b64格式
   clear();
   createSMF();
   load(JZZ.lib.fromBase64(b64), 'Base64 data');
+  console.log(JZZ.lib.fromBase64(b64));
 }
 
 function dragNote() {
@@ -254,6 +256,7 @@ function dragNote() {
 
 function exportMidi() {
   var uri = 'data:audio/midi;base64,' + b64;
+  console.log(b64);
   location.href = uri;
 }
 

@@ -15,7 +15,11 @@ body {
     border-style: solid;
     padding: 2px;
     width: 2.5em;
-    height:1em;
+    height:1.6em;
+  }
+   #mytable
+  {
+    margin-top: 20px;
   }
   #eight_td{
     border: 2px;
@@ -85,4 +89,26 @@ body {
 .tool-btn[id=export]
 {
   float: right;
+}
+
+::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  	border-radius: 10px;
+	background-color: transparent;
+}
+
+::-webkit-scrollbar
+{
+  padding: 15px;
+  position: absolute;
+  width: 12px;
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
+	background-color: transparent;
 }
