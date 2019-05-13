@@ -12,7 +12,7 @@ var playing = false;
 var smf = new JZZ.MIDI.SMF(1, 96);
 var trk0 = new JZZ.MIDI.SMF.MTrk();
 var trk1 = new JZZ.MIDI.SMF.MTrk();
-var b64, str, uri, count = 0;
+var b64, str, uri,count = 0;
 var table = document.getElementById("mytable");
 var dragNote = function(alphabet, power, length) {
   this.alphbet = alphabet;
@@ -91,7 +91,7 @@ function add() //增加表格
   start();
 }
 
-function clickcontrol() {
+function clickcontrol() {                //增加按下音符動作
   var col = table.rows[0].cells.length;
   var tempnote;
   $('.tt td').on('mousedown', function() {
@@ -132,11 +132,12 @@ function clickcontrol() {
     return false;
   });
   $('.tt td').on('mouseup', function() {
+    if(tempnote)
     stopnote(tempnote);
   });
 }
 
-function addnote() {
+function addnote() {                                  //增加音符
   var i = 0;
   string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
   $.each(table.rows[0].cells, function() {
@@ -181,16 +182,14 @@ function createSMF() //建立音樂
     count = 0;
   }
 
-  /*******trk0.smfBPM(120);*/ ////////////
-  // console.log(smf);
   var smftemp = smf;
   str = smftemp.dump(); // MIDI file dumped as a string
 
   b64 = JZZ.lib.toBase64(str); // convert to base-64 string
-  console.log(smftemp);
-  console.log("str= " + str);
-  console.log(str.length);
-  console.log(b64);
+  // console.log(smftemp);
+  // console.log("str= " + str);
+  // console.log(str.length);
+  // console.log(b64);
 }
 
 function clear() //清除目前
@@ -258,6 +257,33 @@ function exportMidi() {
   var uri = 'data:audio/midi;base64,' + b64;
   console.log(b64);
   location.href = uri;
+}
+
+function importMidi()                         //讀黨
+{
+
+  if (window.FileReader) { 
+  var reader = new FileReader();
+    var f = document.getElementById('file').files[0];
+    reader.onload = function(e) {
+      var data = '';
+      var bytes = new Uint8Array(e.target.result);
+      for (var i = 0; i < bytes.length; i++) {
+        data += String.fromCharCode(bytes[i]);
+      }
+      // load(data, f.name);
+        var mysmf = new JZZ.MIDI.SMF(data);
+        console.log(mysmf.length); 
+        console.log(mysmf[0]);
+        console.log(mysmf[1]);
+        console.log(mysmf[2]);
+    };
+    reader.readAsArrayBuffer(f);
+  } 
+    
+
+                
+
 }
 
 
