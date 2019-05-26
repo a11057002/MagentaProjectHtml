@@ -13,7 +13,7 @@ var smf = new JZZ.MIDI.SMF(1, 96);
 var trk0 = new JZZ.MIDI.SMF.MTrk();
 var trk1 = new JZZ.MIDI.SMF.MTrk();
 var mytrk = [];
-var b64, str, uri;
+var b64, str, uri,myppqn=96;
 var table = document.getElementById("mytable");
 var dragNote = function(alphabet, power, length) {
   this.alphbet = alphabet;
@@ -168,7 +168,7 @@ function report(s) //錯誤呼叫
 
 function createSMF() //建立音樂
 {
-  smf = new JZZ.MIDI.SMF(1, 96);
+  smf = new JZZ.MIDI.SMF(1, myppqn);
   trk0 = new JZZ.MIDI.SMF.MTrk();
   trk1 = new JZZ.MIDI.SMF.MTrk();
   smf.push(trk0);
@@ -287,7 +287,10 @@ function createImport(data) {
   var mysmf = new JZZ.MIDI.SMF(data); //建立新的SMF  放data進入
   mytrk = [];
   string = "";
+  console.log(mysmf);
+  console.log(mysmf.toString());
   console.log(mysmf.ppqn);
+  myppqn = mysmf.ppqn;
   var myNewsmf = new JZZ.MIDI.SMF(1, mysmf.ppqn); //建立一個空的smf
   var i = 0;
   var mysmfTick = 0;
@@ -307,7 +310,7 @@ function createImport(data) {
       if (mysmfTick != smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")) && !isNaN(smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")))) { //當目前tick不等於這個音符之tick   tick是否為數字
         mysmfNewString += ".tick(" + (smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")) - mysmfTick) + ")"; //tick為後一個tick減前一個
         mysmfTick = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")); //現在tick等於後來tick
-        if (length % 2 == 0) {
+        if (length%2==0) {
           var temp = table.rows[0].cells.length;
           col = table.rows[0].cells.length;
           var ii = 0;
@@ -354,21 +357,28 @@ function createImport(data) {
     // console.log(mysmfNewString);
     string += mysmfNewString;
     mysmfTick = 0;
-  });
-  // console.log(mysmf);
-  // console.log(mysmf[0].toString());
-  // console.log(mysmf[0].toString().split(" "));
-  // console.log(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]);
-
-  // $("#mytable td")[0]
   $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
   $('#script0').remove();
   $("body").append("<script id='script0'>" + string + "</script\>");
   // console.log(string);
   var mystr = myNewsmf.dump(); // MIDI file dumped as a string
   myb64 = JZZ.lib.toBase64(mystr);
-  // load(mystr, "");
+  load(mystr, "");
   addnote();
+  });
+
+  // console.log(mysmf[0].toString().split(" "));
+  // console.log(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]);
+
+  // $("#mytable td")[0]
+  // $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
+  // $('#script0').remove();
+  // $("body").append("<script id='script0'>" + string + "</script\>");
+  // // console.log(string);
+  // var mystr = myNewsmf.dump(); // MIDI file dumped as a string
+  // myb64 = JZZ.lib.toBase64(mystr);
+  // // load(mystr, "");
+  // addnote();
 }
 
 
