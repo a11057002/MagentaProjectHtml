@@ -13,7 +13,7 @@ var smf = new JZZ.MIDI.SMF(1, 96);
 var trk0 = new JZZ.MIDI.SMF.MTrk();
 var trk1 = new JZZ.MIDI.SMF.MTrk();
 var mytrk = [];
-var b64, str, uri;
+var b64, str, uri, myppqn = 96;
 var table = document.getElementById("mytable");
 var dragNote = function(alphabet, power, length) {
   this.alphbet = alphabet;
@@ -168,7 +168,7 @@ function report(s) //錯誤呼叫
 
 function createSMF() //建立音樂
 {
-  smf = new JZZ.MIDI.SMF(1, 96);
+  smf = new JZZ.MIDI.SMF(1, myppqn);
   trk0 = new JZZ.MIDI.SMF.MTrk();
   trk1 = new JZZ.MIDI.SMF.MTrk();
   smf.push(trk0);
@@ -288,6 +288,7 @@ function createImport(data) {
   mytrk = [];
   string = "";
   console.log(mysmf.ppqn);
+  myppqn = mysmf.ppqn;
   var myNewsmf = new JZZ.MIDI.SMF(1, mysmf.ppqn); //建立一個空的smf
   var i = 0;
   var mysmfTick = 0;
