@@ -287,6 +287,8 @@ function createImport(data) {
   var mysmf = new JZZ.MIDI.SMF(data); //建立新的SMF  放data進入
   mytrk = [];
   string = "";
+  console.log(mysmf);
+  console.log(mysmf.toString());
   console.log(mysmf.ppqn);
   myppqn = mysmf.ppqn;
   var myNewsmf = new JZZ.MIDI.SMF(1, mysmf.ppqn); //建立一個空的smf
@@ -355,21 +357,28 @@ function createImport(data) {
     // console.log(mysmfNewString);
     string += mysmfNewString;
     mysmfTick = 0;
+    $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
+    $('#script0').remove();
+    $("body").append("<script id='script0'>" + string + "</script\>");
+    // console.log(string);
+    var mystr = myNewsmf.dump(); // MIDI file dumped as a string
+    myb64 = JZZ.lib.toBase64(mystr);
+    load(mystr, "");
+    addnote();
   });
-  // console.log(mysmf);
-  // console.log(mysmf[0].toString());
+
   // console.log(mysmf[0].toString().split(" "));
   // console.log(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]);
 
   // $("#mytable td")[0]
-  $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
-  $('#script0').remove();
-  $("body").append("<script id='script0'>" + string + "</script\>");
-  // console.log(string);
-  var mystr = myNewsmf.dump(); // MIDI file dumped as a string
-  myb64 = JZZ.lib.toBase64(mystr);
-  // load(mystr, "");
-  addnote();
+  // $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
+  // $('#script0').remove();
+  // $("body").append("<script id='script0'>" + string + "</script\>");
+  // // console.log(string);
+  // var mystr = myNewsmf.dump(); // MIDI file dumped as a string
+  // myb64 = JZZ.lib.toBase64(mystr);
+  // // load(mystr, "");
+  // addnote();
 }
 
 
