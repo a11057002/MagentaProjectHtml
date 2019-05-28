@@ -14,7 +14,9 @@ var trk0 = new JZZ.MIDI.SMF.MTrk();
 var trk1 = new JZZ.MIDI.SMF.MTrk();
 var mytrk = [];
 var b64, str, uri, myppqn = 96;
+var j = 0;
 var table = document.getElementById("mytable");
+var chordNum = 84;
 var dragNote = function(alphabet, power, length) {
   this.alphbet = alphabet;
   this.length = length;
@@ -34,7 +36,7 @@ var port = JZZ().openMidiOut().or(function() {
 var clientWidth = document.body.clientWidth; //取得螢幕寬度
 // console.log(clientWidth);
 var playHead = document.getElementById("playHead");
-var pos = getPositionX(playHead) / clientWidth * 100;
+// var pos = getPositionX(playHead) / clientWidth * 100;
 // console.log(pos);
 
 function playnote(id) //播放單音
@@ -56,7 +58,7 @@ function createTable() //製作table
   var noteString = "";
   noteTable.innerHTML = "";
   table.innerHTML = "";
-  for (i = 0; i < 84; i++) { //音符數量
+  for (i = 0; i < chordNum; i++) { //音符數量
     if ((i % 12 == 1) || (i % 12 == 3) || (i % 12 == 5) || (i % 12 == 8) || (i % 12 == 10))
       color = "black";
     else
@@ -143,7 +145,7 @@ function clickcontrol() { //增加按下音符動作
 
 function addnote() { //增加音符
   var i = 0;
-  string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
+  string = "trk1.smfSeqName('Music').ch(0).program(0x00).tick(24)";
   $.each(table.rows[0].cells, function() {
     var j = 0;
     if (i != 0)
@@ -367,7 +369,7 @@ function createImport(data) {
       }
       j++;
       console.log(j);
-      if (j == 5000)
+      if (j == 2000)
         return false;
     });
     i++;
@@ -417,13 +419,9 @@ function importAddArray() {
 }
 
 
-/*
-  進度條
-  */
 function run() {
   val = document.getElementsByName("BPM_val")[0].value;
-  var id = setInterval(frame, 10);
-  playHead.style.display = "block";
+  var id = setInterval(frame, (60 / val) * 250);
   playnotebtn.disabled = true;
   pausenotebtn.disabled = false;
   rerunnotebtn.disabled = false;
@@ -431,43 +429,96 @@ function run() {
   function frame() {
     pausenotebtn.addEventListener("click", function() {
       clearInterval(id);
-      playHead.style.marginLeft = pos + "px";
       pausenotebtn.disabled = true;
       playnotebtn.disabled = false;
     });
     rerunnotebtn.addEventListener("click", function() {
+      var temp = j - 1;
       clearInterval(id);
-      pos = 0;
-      playHead.style.marginLeft = pos + "px";
-      playHead.style.display = "none";
+      for (var i = 0; i < chordNum; i++) {
+        table.rows[i].cells[temp].removeAttribute('style');
+      }
+      j = 0;
       playnotebtn.disabled = false;
       pausenotebtn.disabled = true;
       rerunnotebtn.disabled = true;
     });
-    if (pos >= clientWidth) {
 
-      // clearInterval(id);
-      // pos = 0;
-      // playHead.style.marginLeft = pos + "px";
-      // playHead.style.display = "none";
-      // playnotebtn.disabled = false;
-      // pausenotebtn.disabled = true;
-    } else if (pausenotebtn.disabled == false) {
-      playHead.style.marginLeft = pos + "px";
-      pos += (47 / 100) * val / 60 * 4;; //(47/100)*val/60*4;
-      // console.log(pos+"px");
+    if (j < table.rows[0].cells.length) {
+      if (j != 0) {
+        for (var k = 0; k < chordNum; k++) {
+          table.rows[k].cells[j - 1].removeAttribute('style');
+        }
+      }
+      for (var i = 0; i < chordNum; i++) {
+        table.rows[i].cells[j].style.borderRightColor = 'red';
+      }
+      j++;
+    } else {
+      clearInterval(id);
+      for (var k = 0; k < chordNum; k++) {
+        table.rows[k].cells[table.rows[0].cells.length - 1].removeAttribute('style');
+      }
+      j = 0;
+      playnotebtn.disabled = false;
+      pausenotebtn.disabled = true;
+      rerunnotebtn.disabled = true;
     }
   }
 }
 
-function getPositionX(element) {
-  var x = 0;
-  while (element) {
-    x += element.offsetLeft - element.scrollLeft + element.clientLeft;
-    element = element.offsetParent;
-  }
-  return x;
-}
+
+/*
+  進度條
+  */
+// function run() {
+//   val = document.getElementsByName("BPM_val")[0].value;
+//   var id = setInterval(frame, 10);
+//   playHead.style.display = "block";
+//   playnotebtn.disabled = true;
+//   pausenotebtn.disabled = false;
+//   rerunnotebtn.disabled = false;
+//
+//   function frame() {
+//     pausenotebtn.addEventListener("click", function() {
+//       clearInterval(id);
+//       playHead.style.marginLeft = pos + "px";
+//       pausenotebtn.disabled = true;
+//       playnotebtn.disabled = false;
+//     });
+//     rerunnotebtn.addEventListener("click", function() {
+//       clearInterval(id);
+//       pos = 0;
+//       playHead.style.marginLeft = pos + "px";
+//       playHead.style.display = "none";
+//       playnotebtn.disabled = false;
+//       pausenotebtn.disabled = true;
+//       rerunnotebtn.disabled = true;
+//     });
+//     if (pos >= clientWidth) {
+//
+//       // clearInterval(id);
+//       // pos = 0;
+//       // playHead.style.marginLeft = pos + "px";
+//       // playHead.style.display = "none";
+//       // playnotebtn.disabled = false;
+//       // pausenotebtn.disabled = true;
+//     } else if (pausenotebtn.disabled == false) {
+//       playHead.style.marginLeft = pos + "px";
+//       pos += (47 / 100) * val / 60 * 4;; //(47/100)*val/60*4;
+//       // console.log(pos+"px");
+//     }
+//   }
+// }
+//
+// function getPositionX(element) {
+//   var x = 0;
+//   while (element) {
+//     x += element.offsetLeft - element.scrollLeft + element.clientLeft;
+//     element = element.offsetParent;
+//   }
+//   return x;
+// }
 
 
 
