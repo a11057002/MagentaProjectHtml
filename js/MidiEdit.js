@@ -369,7 +369,7 @@ function createImport(data) {
       }
       j++;
       console.log(j);
-      if (j == 2000)
+      if (j == 4000)
         return false;
     });
     i++;
