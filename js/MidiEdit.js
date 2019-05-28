@@ -64,7 +64,7 @@ function createTable() //製作table
     else
       color = "white";
     noteTable.innerHTML += "<tr  id=" + (95 - i) + " onmousedown='playnote(this.id)'; onmouseup='stopnote(this.id)';><th class='" + color + "'>" + note[i % 12] + count + "</th></tr>"; //C3->60 D3->61
-    table.innerHTML += "<tr class='tt' name='" + (95 - i) + "'><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+    table.innerHTML += "<tr class='tt' name='" + (95 - i) + "'><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
     if (i % 12 == 0) count--;
   }
 
@@ -91,7 +91,7 @@ function start() //開始設置  觸發點擊事件
 
 function add() //增加表格
 {
-  $(".tt").append("<td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>");
+  $(".tt").append("<td id='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>");
   $('.tt td').off('mousedown');
   start();
 }
@@ -102,12 +102,12 @@ function clickcontrol() { //增加按下音符動作
   $('.tt td').on('mousedown', function() {
     playnote($(this).parent().attr("name"));
     tempnote = $(this).parent().attr("name");
-    if (col - $(this).index() < 8) {
+    if (col - $(this).index() < 16) {
       var temp = table.rows[0].cells.length;
       add();
       col = table.rows[0].cells.length;
       var i = 0;
-      while (i < 8) {
+      while (i < 16) {
         var j = 0;
         noteColArray[i + temp] = new Array();
         while (j < table.rows.length) {
@@ -405,7 +405,7 @@ function importAddArray() {
   var temp = table.rows[0].cells.length;
   col = table.rows[0].cells.length;
   var ii = 0;
-  while (ii < 8) {
+  while (ii < 16) {
     var jj = 0;
     noteColArray[ii + temp] = new Array();
     // console.log(table.row.length);
