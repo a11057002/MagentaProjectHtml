@@ -56,7 +56,7 @@ function createTable() //製作table
   var noteString = "";
   noteTable.innerHTML = "";
   table.innerHTML = "";
-  for (i = 0; i < 84; i++) {
+  for (i = 0; i < 84; i++) { //音符數量
     if ((i % 12 == 1) || (i % 12 == 3) || (i % 12 == 5) || (i % 12 == 8) || (i % 12 == 10))
       color = "black";
     else
@@ -335,11 +335,11 @@ function createImport(data) {
       if (smfSplitString[j].substring(smfSplitString[j].indexOf("--") + 3, smfSplitString[j].indexOf("--") + 10) === "Note On") { //當指令（轉10進位後）為144時  播放
         var note = parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16);
         mysmfNewString += ".noteOn(" + note + ",64)"; //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
-        console.log(-parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16) + 95);
-        console.log(parseInt(mysmfTick / 24));
-        console.log(mysmfTick / 24);
-        console.log(document.getElementsByName(note)[0]);
-        console.log((-note + 95));
+        // console.log(-parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16) + 95);
+        // console.log(parseInt(mysmfTick / 24));
+        // console.log(mysmfTick / 24);
+        // console.log(document.getElementsByName(note)[0]);
+        // console.log((-note + 95));
         if ((-note + 95) > -1) {
           try {
             document.getElementsByName(note)[0].children[parseInt(mysmfTick / (24 * (myppqn / 96)))].className = "highlighted";
@@ -366,8 +366,9 @@ function createImport(data) {
         mysmfNewString += ".smfBPM(" + mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1] + ")";
       }
       j++;
-      // if (j == 1000)
-      //   return false;
+      console.log(j);
+      if (j == 5000)
+        return false;
     });
     i++;
 
@@ -445,12 +446,12 @@ function run() {
     });
     if (pos >= clientWidth) {
 
-      clearInterval(id);
-      pos = 0;
-      playHead.style.marginLeft = pos + "px";
-      playHead.style.display = "none";
-      playnotebtn.disabled = false;
-      pausenotebtn.disabled = true;
+      // clearInterval(id);
+      // pos = 0;
+      // playHead.style.marginLeft = pos + "px";
+      // playHead.style.display = "none";
+      // playnotebtn.disabled = false;
+      // pausenotebtn.disabled = true;
     } else if (pausenotebtn.disabled == false) {
       playHead.style.marginLeft = pos + "px";
       pos += (47 / 100) * val / 60 * 4;; //(47/100)*val/60*4;
