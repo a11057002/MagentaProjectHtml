@@ -56,7 +56,7 @@ function createTable() //製作table
   var noteString = "";
   noteTable.innerHTML = "";
   table.innerHTML = "";
-  for (i = 0; i < 60; i++) {
+  for (i = 0; i < 84; i++) {
     if ((i % 12 == 1) || (i % 12 == 3) || (i % 12 == 5) || (i % 12 == 8) || (i % 12 == 10))
       color = "black";
     else
@@ -168,7 +168,7 @@ function report(s) //錯誤呼叫
 
 function createSMF() //建立音樂
 {
-  smf = new JZZ.MIDI.SMF(1, myppqn);
+  smf = new JZZ.MIDI.SMF(1, 96);
   trk0 = new JZZ.MIDI.SMF.MTrk();
   trk1 = new JZZ.MIDI.SMF.MTrk();
   smf.push(trk0);
@@ -295,6 +295,7 @@ function createImport(data) {
   var i = 0;
   var mysmfTick = 0;
   var myFinalString = "";
+  $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
   $.each(mysmf, function() { //對每個track做動作
     mytrk[i] = new JZZ.MIDI.SMF.MTrk(); //根據track個數push
     myNewsmf.push(mytrk[i]);
@@ -303,6 +304,7 @@ function createImport(data) {
     var mysmfNewString = "mytrk[" + i + "].smfSeqName('Music').ch(0).program(0x00).tick(96)";
     var j = 0;
     var length = 0;
+    var count = 0;
     $.each(smfSplitString, function() { //對每個動作分析
       // console.log(mysmfTick);
       // console.log(length);
@@ -310,23 +312,25 @@ function createImport(data) {
       if (mysmfTick != smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")) && !isNaN(smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")))) { //當目前tick不等於這個音符之tick   tick是否為數字
         mysmfNewString += ".tick(" + (smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")) - mysmfTick) + ")"; //tick為後一個tick減前一個
         mysmfTick = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":")); //現在tick等於後來tick
-        if (length % 2 == 0) {
-          var temp = table.rows[0].cells.length;
-          col = table.rows[0].cells.length;
-          var ii = 0;
-          while (ii < 8) {
-            var jj = 0;
-            noteColArray[ii + temp] = new Array();
-            // console.log(table.row.length);
-            while (jj < table.rows.length) {
-              noteColArray[ii + temp][jj] = new Array();
-              jj++;
-            }
-            ii++;
-          }
-          add();
-        }
-        length++;
+        // if (length > 6 && count > 23) {
+        // var temp = table.rows[0].cells.length;
+        // col = table.rows[0].cells.length;
+        // var ii = 0;
+        // while (ii < 8) {
+        //   var jj = 0;
+        //   noteColArray[ii + temp] = new Array();
+        //   // console.log(table.row.length);
+        //   while (jj < table.rows.length) {
+        //     noteColArray[ii + temp][jj] = new Array();
+        //     jj++;
+        //   }
+        //   ii++;
+        // }
+        // add();
+        //   length = 0;
+        // }
+        // length++;
+        // count++;
       }
       if (smfSplitString[j].substring(smfSplitString[j].indexOf("--") + 3, smfSplitString[j].indexOf("--") + 10) === "Note On") { //當指令（轉10進位後）為144時  播放
         var note = parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16);
@@ -335,10 +339,21 @@ function createImport(data) {
         console.log(parseInt(mysmfTick / 24));
         console.log(mysmfTick / 24);
         console.log(document.getElementsByName(note)[0]);
-        console.log(document.getElementsByName(note)[0].children[parseInt(mysmfTick / 24)]);
-        document.getElementsByName(note)[0].children[parseInt(mysmfTick / 24)].className = "highlighted";
-        console.log(-note + 95);
-        noteColArray[parseInt(mysmfTick / 24)][-note + 95] = ".note(" + note + ",64,24)";
+        console.log((-note + 95));
+        if ((-note + 95) > -1) {
+          try {
+            document.getElementsByName(note)[0].children[parseInt(mysmfTick / (24 * (myppqn / 96)))].className = "highlighted";
+            noteColArray[parseInt(mysmfTick / (24 * (myppqn / 96)))][-note + 95] = ".note(" + note + ",64,24)";
+
+          } catch (e) {
+            importAddArray();
+            importAddArray();
+            importAddArray();
+          } finally {
+            document.getElementsByName(note)[0].children[parseInt(mysmfTick / (24 * (myppqn / 96)))].className = "highlighted";
+            noteColArray[parseInt(mysmfTick / (24 * (myppqn / 96)))][-note + 95] = ".note(" + note + ",64,24)";
+          }
+        }
         // console.log(noteColArray);
 
       }
@@ -351,15 +366,17 @@ function createImport(data) {
         mysmfNewString += ".smfBPM(" + mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1] + ")";
       }
       j++;
+      // if (j == 1000)
+      //   return false;
     });
     i++;
+
     mysmfNewString += ".tick(96).smfEndOfTrack();\n"; //每個track最後停止指令
     // console.log(mysmfNewString);
     string += mysmfNewString;
     mysmfTick = 0;
-    $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]); //將BPM放入左上
-    $('#script0').remove();
-    $("body").append("<script id='script0'>" + string + "</script\>");
+    // $('#script0').remove();
+    // $("body").append("<script id='script0'>" + string + "</script\>");
     // console.log(string);
     var mystr = myNewsmf.dump(); // MIDI file dumped as a string
     myb64 = JZZ.lib.toBase64(mystr);
@@ -381,6 +398,22 @@ function createImport(data) {
   // addnote();
 }
 
+function importAddArray() {
+  var temp = table.rows[0].cells.length;
+  col = table.rows[0].cells.length;
+  var ii = 0;
+  while (ii < 8) {
+    var jj = 0;
+    noteColArray[ii + temp] = new Array();
+    // console.log(table.row.length);
+    while (jj < table.rows.length) {
+      noteColArray[ii + temp][jj] = new Array();
+      jj++;
+    }
+    ii++;
+  }
+  add();
+}
 
 
 /*
