@@ -50,9 +50,9 @@ body {
     border-color: lightblue;
     background-color: black;
   }
-  .notec tr td:hover
+  .hover:hover
   {
-   background-color: lightblue;
+    background-color: blue;
   }
   .notec tr:hover{
     background-color:rgba(100,100,100,0.3);
