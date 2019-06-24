@@ -119,13 +119,6 @@ function clickcontrol() { //增加按下音符動作
             i++;
           }
         }
-        $(".notec tr td").addClass('hover');
-        $(this).addClass("highlighted");
-        var number = -$(this).parent().attr("name") + 95;
-        noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",64,24)"; //將音符加入array    note,velocity,clock
-        console.log(number);
-        addnote();
-
         return false;
     }
   });
@@ -135,23 +128,46 @@ function clickcontrol() { //增加按下音符動作
   {
     if(event.which == 1 & dragControl)
     {
-      dragControl = false;
+      // dragControl = false;
+      // $(this).addClass('hover');
+      if($(this).parent().attr("name") != tempnote)
+      {
+        stopnote(tempnote);
+        playnote($(this).parent().attr("name"));
+        tempnote = $(this).parent().attr("name");
+      }
       $(this).removeClass("highlighted");
+
       var number = -$(this).parent().attr("name") + 95;
       noteColArray[$(this).index()][number] = new Array(); //將音符刪除array
-      addnote();
     }
-
   });
 
+  $('.tt td').on('mouseover',function(event)    //滑鼠進
+  {
+    if(dragControl)
+      $(this).addClass('hover');
+  });
+
+  $('.tt td').on('mouseout',function(event)    //滑鼠出
+  {
+    if(dragControl)
+      $(this).removeClass('hover');
+  });
+
+
+  $('.tt td').on('mouseup',function(event)    //滑鼠上
+  {
+    if(dragControl)
+      $(this).removeClass('hover');
+  });
 
   $('.tt td').on('contextmenu',function()    //滑鼠右鍵
   {
     $(this).removeClass("highlighted");
+    // $(this).removeClass('hover');
     var number = -$(this).parent().attr("name") + 95;
     noteColArray[$(this).index()][number] = new Array(); //將音符刪除array
-
-    addnote();
     return false;
   });
 
@@ -161,11 +177,10 @@ function clickcontrol() { //增加按下音符動作
 
     if(event.which == 1)
     {
-      $(".notec tr td").removeClass('hover');
+      dragControl = false;
       $(this).addClass("highlighted");
       var number = -$(this).parent().attr("name") + 95;
       noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",64,24)"; //將音符加入array    note,velocity,clock
-      addnote();
     }
   });
 }
@@ -274,6 +289,7 @@ function fromBase64() //轉為b64格式
 {
   run();
   clear();
+  addnote();
   createSMF();
   load(JZZ.lib.fromBase64(b64), 'Base64 data');
   console.log(JZZ.lib.fromBase64(b64));
@@ -311,6 +327,7 @@ function createImport(data) {
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
   mytrk = [];
   string = "";
+  string2 = "";
   myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
   var myNewsmf = new JZZ.MIDI.SMF(1, mysmf.ppqn);                         //建立一個空的smf
   var i = 0;                                                              //track數量
@@ -359,7 +376,6 @@ function createImport(data) {
     mysmfNewString += ".tick(96).smfEndOfTrack();\n"; //每個track最後停止指令
     string2 += mysmfNewString;                         //存入全域變數
     mysmfTick = 0;                                    //重設 讓下一個travk用
-    addnote();
   });
 }
 
