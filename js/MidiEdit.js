@@ -8,7 +8,7 @@ var string2 ="";                                                                
 var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!')); //MIDI
 var player;
 var noteArray = new Array();                                                           //drag note所用 目前無用
-var noteTotal = 0;                                                                     //音符總量
+var noteTotal = 0;                                                                     //音符目前總量
 var playing = false;
 var smf = new JZZ.MIDI.SMF(1, 96);
 var trk0 = new JZZ.MIDI.SMF.MTrk();
@@ -17,9 +17,10 @@ var mytrk = [];
 var b64, str, uri, myppqn = 96;
 var j = 0;
 var table = document.getElementById("mytable");
-var chordNum = 84;
+var chordNum = 84;                                                                     //鍵盤音符數量
+var tempnote;
 
-var dragControl = false;
+var dragControl = 0;
 var playnotebtn = document.getElementById("btn");
 var pausenotebtn = document.getElementById("btn2");
 var rerunnotebtn = document.getElementById("btn3");
@@ -93,14 +94,14 @@ function add() //增加表格
 
 function clickcontrol() { //增加按下音符動作
   var col = table.rows[0].cells.length;
-  var tempnote;
   $('.tt td').on('mousedown', function(event)
   {
     if(event.which == 1)
     {
-        dragControl = true;
+        dragControl = 1;
         playnote($(this).parent().attr("name"));
         tempnote = $(this).parent().attr("name");
+        console.log(tempnote);
         if (col - $(this).index() < 16)
         {
           var temp = table.rows[0].cells.length;
@@ -126,17 +127,22 @@ function clickcontrol() { //增加按下音符動作
 
   $('.tt td').on('mousemove',function(event)    //滑鼠拖曳
   {
-    if(event.which == 1 & dragControl)
+    if(event.which == 1 && dragControl)
     {
       // dragControl = false;
       // $(this).addClass('hover');
       if($(this).parent().attr("name") != tempnote)
       {
+        console.log(tempnote);
         stopnote(tempnote);
         playnote($(this).parent().attr("name"));
         tempnote = $(this).parent().attr("name");
       }
-      $(this).removeClass("highlighted");
+      if(dragControl == 1)
+      {
+        $(this).removeClass("highlighted");
+        dragControl = 2;
+      }
 
       var number = -$(this).parent().attr("name") + 95;
       noteColArray[$(this).index()][number] = new Array(); //將音符刪除array
@@ -177,7 +183,7 @@ function clickcontrol() { //增加按下音符動作
 
     if(event.which == 1)
     {
-      dragControl = false;
+      dragControl = 0;
       $(this).addClass("highlighted");
       var number = -$(this).parent().attr("name") + 95;
       noteColArray[$(this).index()][number] = ".note(" + $(this).parent().attr("name") + ",64,24)"; //將音符加入array    note,velocity,clock
@@ -375,7 +381,7 @@ function createImport(data) {
 
     mysmfNewString += ".tick(96).smfEndOfTrack();\n"; //每個track最後停止指令
     string2 += mysmfNewString;                         //存入全域變數
-    mysmfTick = 0;                                    //重設 讓下一個travk用
+    mysmfTick = 0;                                    //重設 讓下一個track用
   });
 }
 
