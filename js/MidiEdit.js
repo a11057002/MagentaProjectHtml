@@ -89,6 +89,7 @@ function dragStart(event) {
   previousevent = event;
   positiondata = event.target.innerHTML.split(" ")[1];
   event.target.style.backgroundColor='rgba(60,0,220,0.5)';
+  event.target.style.cursor='grabbing';
 }
 
 function allowDrop(event) {
@@ -481,6 +482,6 @@ $(function() {
     clear();
     createTable();
     if(player)
-    playStop();
+      playStop();
   });
 });
