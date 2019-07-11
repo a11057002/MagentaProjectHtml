@@ -478,8 +478,9 @@ $(function() {
     clientWidth = document.body.clientWidth;
   }).resize();
   $('#btn4').on('click',function(){
-    playStop();
     clear();
     createTable();
+    if(player)
+    playStop();
   });
 });
