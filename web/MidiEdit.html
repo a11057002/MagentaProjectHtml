@@ -8,9 +8,10 @@
 <body onload="createTable()">
   <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
     <b style="color:white; float:left;">Speed:</b><input type="text" name="BPM_val" style="width:50px; float:left;" value="50">
-    <input class="tool-btn" id="btn" type="button" value="Play" onclick="fromBase64()">
-    <input class="tool-btn" id="btn2" type="button" value="Pause" onclick="playPause()">
-    <input class="tool-btn" id="btn3" type="button" value="Rerun" onclick="playRerun()">
+    <input class="tool-btn" id="btn" type="button" value="播放" onclick="fromBase64()">
+    <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()">
+    <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()">
+    <input class="tool-btn" id="btn4" type="button" value="清除全部" >
     <input id="file" type="file" size="80" onchange="importMidi()">
     <input class="tool-btn" id="export" type="button" value="匯出" disabled onclick="exportMidi()">
   </div>

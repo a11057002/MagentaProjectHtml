@@ -22,6 +22,7 @@ var dragSource;
 var playnotebtn = document.getElementById("btn");
 var pausenotebtn = document.getElementById("btn2");
 var rerunnotebtn = document.getElementById("btn3");
+var clearnotebtn = document.getElementById("btn4");
 var positiondata;       // drag previous tick data
 var previousevent;      // drag previous event
 var val;   //bpm value
@@ -30,6 +31,7 @@ var resizeNote = false;
 var tempwidth,newWidth;
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
+clearnotebtn.disabled = false;
 
 var port = JZZ().openMidiOut().or(function() {
   alert('Cannot open MIDI port!');
@@ -301,7 +303,7 @@ function load(data, name) //播放偵測
   }
 }
 
-function playRerun() //停止播放
+function playStop() //停止播放
 {
   player.stop();
   playing = false;
@@ -425,12 +427,14 @@ function run() {
   playnotebtn.disabled = true;
   pausenotebtn.disabled = false;
   rerunnotebtn.disabled = false;
+  clearnotebtn.disabled = true;
 
   function frame() {
     pausenotebtn.addEventListener("click", function() {
       clearInterval(id);
       pausenotebtn.disabled = true;
       playnotebtn.disabled = false;
+      clearnotebtn.disabled = true;
     });
     rerunnotebtn.addEventListener("click", function() {
       var temp = j - 1;
@@ -440,6 +444,7 @@ function run() {
       }
       j = 0;
       playnotebtn.disabled = false;
+      clearnotebtn.disabled = false;
       pausenotebtn.disabled = true;
       rerunnotebtn.disabled = true;
     });
@@ -461,6 +466,7 @@ function run() {
       }
       j = 0;
       playnotebtn.disabled = false;
+      clearnotebtn.disabled = false;
       pausenotebtn.disabled = true;
       rerunnotebtn.disabled = true;
     }
@@ -471,4 +477,9 @@ $(function() {
   $(window).resize(function() {
     clientWidth = document.body.clientWidth;
   }).resize();
+  $('#btn4').on('click',function(){
+    playStop();
+    clear();
+    createTable();
+  });
 });
