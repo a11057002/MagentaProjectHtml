@@ -9,27 +9,56 @@ body {
     table-layout: fixed;
   }
 
-  .notec td {
-    border: 2px;
+  .leftradius{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  .rightradius{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .fullradius{
     border-radius: 10px;
+  }
+
+  .notec td{
+    /* border: 2px; */
     border-style: solid;
     padding: 2px;
     width: 2.5em;
     height:1.6em;
+    z-index:5;
   }
-   #mytable
-  {
+
+   #mytable{
     margin-top: 20px;
   }
-  #eight_td{
+
+
+  .eight_td{
     border: 2px;
-    border-radius: 10px;
-    border-style: solid;
-    border-right:3px gray solid;
+    border-right:3px solid;
+    border-right-color: gray;
     padding: 2px;
+    z-index: -1;
     width: 2.5em;
     height:1.6em;
   }
+
+  .createnote{
+    display: block;
+    width: 40px;
+    height: 100%;
+    z-index: 100;
+    border-radius: 10px;
+    text-align: center;
+    background-color: rgb(60,0,220);
+    font-size: 0px;
+    position: relative;
+  }
+
   .notec th {
     border-radius: 10px;
     padding: 2px;
@@ -50,8 +79,7 @@ body {
     border-color: lightblue;
     background-color: black;
   }
-  .hover:hover
-  {
+  .hover:hover{
     background-color: blue;
   }
   .notec tr:hover{
@@ -63,9 +91,6 @@ body {
   th.white:hover{
     background-color: blue;
     color:white;
-  }
-  .highlighted {
-    background-color:rgb(60,0,220);
   }
 
 .tool-btn{
