@@ -1,3 +1,4 @@
+
 (function(global, factory) {
   if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = factory();
@@ -2497,7 +2498,7 @@
         else return;
       }
       if (timestamp > _now()) {
-        setTimeout(function() { port.send(v); }, timestamp - _now()); 
+        setTimeout(function() { port.send(v); }, timestamp - _now());
       }
       else port.send(v);
     }

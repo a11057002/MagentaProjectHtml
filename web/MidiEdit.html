@@ -1,10 +1,15 @@
 <html>
 <script src="../js/jquery.js"></script>
 <link rel="stylesheet" type="text/css" href="../css/MidiEdit.css">
+<link rel="SHORTCUT ICON" href='../resources/home.png'>
 <script src="../github/JZZ-master/javascript/JZZ.js"></script>
 <script src="../github/JZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
 <script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
 <script src="../js/bar.js"></script>
+<script src="../js/receiver.js"></script>
+<head>
+  <meta charset="UTF-8" >
+</head>
 <body onload="createTable()">
   <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
     <b style="color:white; float:left;">Speed:</b><input type="text" name="BPM_val" style="width:50px; float:left;" value="50">
@@ -30,7 +35,35 @@
       </td>
     </table>
   </div>
+  <!-- <div  style="text-align:center;color:white;height:3%;width:20%;left:40%;position:absolute;top:40%; border: 1px solid white;background-Color:black;">
+    <a id='progessbar'> </a>
+  </div> -->
 </body>
+<script>
 
+// function worker_function()
+// {
+//   "use strict";
+// // self.importScripts('../js/jquery.js');
+// self.addEventListener('message', function(e) {
+//   console.log(e.data);
+// }, false);
+// var iii = 0;
+//
+//  setInterval(function(){iii = iii + 1;self.postMessage(iii + " / 54");},100);
+// }
+
+// var worker = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"])));
+let worker = null;
+document.addEventListener("DOMContentLoaded", function()
+{
+var worker = new Worker('../js/worker.js');
+worker.onmessage = (e => ViaReceiver.OnMessage(e.data));
+ViaReceiver.postMessage = (data => worker.postMessage(data));
+worker.postMessage("start");
+});
+// worker.addEventListener('DOMContentLoaded','worker_function',false);
+
+</script>
 <script src="../js/MidiEdit.js"></script>
 </html>

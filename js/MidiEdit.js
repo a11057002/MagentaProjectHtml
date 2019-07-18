@@ -1,10 +1,11 @@
+
 JZZ.synth.Tiny.register('Synth');
 JZZ.synth.Tiny.register('Web Audio');
 var note = new Array("B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"); //音符陣列
-// var noteColArray = new Array();                                                        //存音符的陣列
+// var noteColArray = new `Array`();                                                        //存音符的陣列
 var table = document.getElementById("mytable");                                        //拿table
-var string = "";
-var string2 ="";                                                                       // 存有按的音符
+var string = "";                                                                     // 存有按的音符
+var string2 = "";
 var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!')); //MIDI
 var player;
 var noteTotal = 0;                                                                     //音符目前總量
@@ -23,12 +24,17 @@ var playnotebtn = document.getElementById("btn");
 var pausenotebtn = document.getElementById("btn2");
 var rerunnotebtn = document.getElementById("btn3");
 var clearnotebtn = document.getElementById("btn4");
+var progessbar = document.getElementById('progessbar');
+var tablett = document.getElementsByClassName('tt');
 var positiondata;       // drag previous tick data
 var previousevent;      // drag previous event
 var val;   //bpm value
 var cursorX;
 var resizeNote = false;
 var tempwidth,newWidth;
+var tablenode = "<td class ='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+
+
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
 clearnotebtn.disabled = false;
@@ -79,9 +85,11 @@ function start() //開始設置  觸發點擊事件
 
 function addtable() //增加表格
 {
-  $(".tt").append("<td class ='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>");
-  $('.tt td').off('mousedown');
-  start();
+  for(var i= 0; i <chordNum ; i++)
+  {
+    tablett[i].innerHTML+=tablenode + tablenode;
+  }
+  // $('.tt td').off('mousedown');
 }
 
 function dragStart(event) {
@@ -140,6 +148,7 @@ function clickcontrol() { //增加按下音符動作
         if (col - $(this).index() < 16)
         {
           addtable();
+          start();
         }
         if(resizeNote)
         {
@@ -168,7 +177,7 @@ function clickcontrol() { //增加按下音符動作
           // console.log(event.clientX);
           // $(this).children().css('z-index', '-2');
           tempwidth = noteWidth + (event.clientX -cursorX);
-          console.log(tempwidth);
+          // console.log(tempwidth);
           noteToResize.css('width',  tempwidth + 'px');
         }
     }
@@ -202,12 +211,11 @@ function clickcontrol() { //增加按下音符動作
   $('.tt td').on('mouseup', function(event) {
     if (tempnote)
       stopnote(tempnote);
-      console.log(resizeNote);
+
     if(resizeNote)
     {
       newWidth = (parseInt(tempwidth/46)+1)*40 + (parseInt(tempwidth/46))*7;
       newTick = (parseInt(tempwidth/46)+1)*24;
-      console.log(parseInt(newWidth));
       noteToResize.css('width',  newWidth + 'px');
       noteToResize.html(".note(" + $(this).parent().attr('name') + ",64, "+ newTick +" )");  //24  tick旁邊有空白方便切割
       noteToResize = '';
@@ -228,17 +236,41 @@ function addnote()  //增加音符
 {
   var i = 0;
   var j = 0;
-  string = "trk1.smfSeqName('Music').ch(0).program(0x00).tick(24)";
+  var allTickPrevious=0;
+  var lengthOfString;
+  string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
+  string2 = "trk2.smfSeqName('Music').ch(0).program(0x00)";
 
-    $.each(table.rows[0].cells, function()
+    $.each(table.rows[0].cells, function()    //每一行
     {
-      if (j != 0)
-        string += ".tick(24)";
+        allTickPrevious+=24;
 
+        lengthOfString = string.length;
+
+
+        if(lengthOfString > 40000)
+        {
+          if(string2 == "trk2.smfSeqName('Music').ch(0).program(0x00)")
+          {
+            console.log(allTickPrevious);
+            string2 += ".tick(" + allTickPrevious + ")";
+          }
+          string2 += ".tick(24)";
+        }
+        else {
+          string += ".tick(24)";
+        }
 
       for(;i<chordNum;i++)
       {
-        string += table.children[i].children[0].children[j].innerText;
+        if(lengthOfString > 40000)
+        {
+          string2 += table.children[i].children[0].children[j].innerText;
+        }
+        else
+        {
+            string += table.children[i].children[0].children[j].innerText;
+        }
       }
       j++;
       i=0;
@@ -258,14 +290,18 @@ function createSMF() //建立音樂
   smf = new JZZ.MIDI.SMF(1, 96);
   trk0 = new JZZ.MIDI.SMF.MTrk();
   trk1 = new JZZ.MIDI.SMF.MTrk();
+  trk2 = new JZZ.MIDI.SMF.MTrk();
   smf.push(trk0);
   smf.push(trk1);
+  smf.push(trk2);
   val = document.getElementsByName("BPM_val")[0].value;
   trk0.smfBPM(val); //speed
   console.log(smf.toString());
 
   $('#script0').remove();
+  $('#script1').remove();
   $("body").append("<script id='script0'>" + string + ".tick(24).smfEndOfTrack();</script\>");
+  $("body").append("<script id='script1'>" + string2 + ".tick(24).smfEndOfTrack();</script\>");
   // console.log(string2);
 
   var smftemp = smf;
@@ -368,59 +404,75 @@ function createImport(data) {
     $(this)[0].className = "";
   });
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
+  var inputNoteString;
   mytrk = [];
   string = "";
-  string2 = "";
   myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
-  var myNewsmf = new JZZ.MIDI.SMF(1, mysmf.ppqn);                         //建立一個空的smf
   var i = 0;                                                              //track數量
   var mysmfTick = 0;                                                      //存目前到第幾個tick
+
   $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]);     //將BPM放入左上
   $.each(mysmf, function() {                                                                                                  //對每個track做動作
     mytrk[i] = new JZZ.MIDI.SMF.MTrk();                                                                                       //根據track個數push
-    myNewsmf.push(mytrk[i]);
+
     var smfSplitString = mysmf[i].toString().split("\n");                                                                     //將每個動作切開
-    var mysmfNewString = "trk" + i + ".smfSeqName('Music').ch(0).program(0x00).tick(96)";
     var j = 0;
-    console.log(smfSplitString);                                                                                     //紀錄每個track 音符數
-    $.each(smfSplitString, function() {                                                                                       //對每個動作分析
-      var ticktemp = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":"));                                          //存目前tick
+    var ticktemp = "";
+    var note = "";
+    inputNoteString = new Array(84);
+                                                                           //紀錄每個track 音符數
+      $.each(smfSplitString, function() {                                                                                       //對每個動作分析
+      ticktemp = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":"));                                          //存目前tick
 
       if (mysmfTick != ticktemp && !isNaN(ticktemp)) {                                                                        //當目前tick不等於這個音符之tick   tick是否為數字
-        mysmfNewString += ".tick(" + (ticktemp - mysmfTick) + ")";                                                            //tick為後一個tick減前一個
         mysmfTick = ticktemp;                                                                                                 //現在tick等於後來tick
       }
-      if (smfSplitString[j].substring(smfSplitString[j].indexOf("--") + 3, smfSplitString[j].indexOf("--") + 10) === "Note On") {                                     //當指令note on
-        var note = parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16);
-        mysmfNewString += ".noteOn(" + note + ",64)";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
+
+      var mySplitString = smfSplitString[j].substring(smfSplitString[j].indexOf("--") + 3, smfSplitString[j].indexOf("--") + 10);
+      note = parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16);
+
+      if (mySplitString === "Note On") {                                     //當指令note on
+        inputNoteString[note] = mysmfTick;
+      } else if (mySplitString === "Note Of") {                               //當指令為note off
+        var calculateTick = parseInt((mysmfTick-inputNoteString[note])/(24*myppqn/96));
+        var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",64, "+ parseInt(24*calculateTick) +" )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
+
         if ((-note + 95) > -1) {          //音符不得<0
           try {
-            document.getElementsByName(note)[0].children[parseInt(mysmfTick / (24 * (myppqn / 96)))].innerHTML = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",64,24)</div>";    //判斷格子數是否充足
+          document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].innerHTML = addNoteString;   //判斷格子數是否充足
           } catch (e) {
             addtable();
-            addtable();
-          } finally {
-            document.getElementsByName(note)[0].children[parseInt(mysmfTick / (24 * (myppqn / 96)))].innerHTML = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",64,24)</div>";
           }
+            try{
+              document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].innerHTML = addNoteString;
+            }
+            catch(e)
+            {
+              addtable();
+            }
+            finally
+            {
+              document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].innerHTML = addNoteString;
+              document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].children[0].style.width = 40*calculateTick + 7*(calculateTick-1);
+            }
         }
-      } else if (smfSplitString[j].substring(smfSplitString[j].indexOf("--") + 3, smfSplitString[j].indexOf("--") + 11) === "Note Off") {                               //當指令為note off
-        mysmfNewString += ".noteOff(" + parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16) + ")";
-      } else if (smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[0] == "ff51") {                         //當指令為ff51（16進位）時  加入bpm數值
-        mysmfNewString += ".smfBPM(" + mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1] + ")";
       }
+      console.log(j+"/" + smfSplitString.length);
+      // progessbar.innerText = j +  "/" +smfSplitString.length;
+      // console.log(smfSplitString[j]);
       j++;
-      console.log(j);
-      // if (j == 4000)
+      // if (j == 6000)
       //   return false;
     });
     i++;
-    mysmfNewString += ".tick(96).smfEndOfTrack();\n"; //每個track最後停止指令
-    string2 += mysmfNewString;                         //存入全域變數
     mysmfTick = 0;                                    //重設 讓下一個track用
     // load(mysmf.dump(),'base');
   });
-    window.alert("Finish input");
+  console.log(inputNoteString);
+  start();
+   // alert("Finish input");
 }
+
 
 function run() {
   val = document.getElementsByName("BPM_val")[0].value;
@@ -484,4 +536,5 @@ $(function() {
     if(player)
       playStop();
   });
+
 });
