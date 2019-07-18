@@ -41,7 +41,7 @@ async function Start()
 	div.style.backgroundColor = "black";
 	div.style.border = "1px solid white";
 	div.style.textAlign = "center";
-	document.body.appendChild(div);
+	// document.body.appendChild(div);
 	var i = 0;
 	setInterval(function(){div.textContent = i;i++;},100);
 }
