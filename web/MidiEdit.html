@@ -17,12 +17,17 @@
     <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()">
     <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()">
     <input class="tool-btn" id="btn4" type="button" value="清除全部" >
+    <select id='select' value='選取功能' onchange="mouseToChoose()">
+      <option value='編輯'>編輯音符</option>
+      <option value='選取'>選取範圍</option>
+    </select>
     <input id="file" type="file" size="80" onchange="importMidi()">
     <input class="tool-btn" id="export" type="button" value="匯出" disabled onclick="exportMidi()">
   </div>
   <div style="overflow-x:hidden;overflow-y:auto;position:fixed; height:84%;top:7%;">
     <table style="width:100%">
-      <td style="width: 148px; z-index: 2;">
+      <div></div>
+      <td style="width: 148px; z-index: 2;" id="leftnotebar">
         <table class="notec" style=" position:relative; width:100%;"id="mynote">
         </table>
       </td>

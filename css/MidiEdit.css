@@ -4,6 +4,7 @@ body {
   }
 
   table {
+    border-width: 2px;
     border-collapse: collapse;
     text-align: right;
     table-layout: fixed;
@@ -23,8 +24,12 @@ body {
     border-radius: 10px;
   }
 
+  .eight_td{
+    border-right-color: gray;
+  }
+
   .notec td{
-    /* border: 2px; */
+    border-width: 2px;
     border-style: solid;
     padding: 2px;
     width: 2.5em;
@@ -37,15 +42,6 @@ body {
   }
 
 
-  .eight_td{
-    border: 2px;
-    border-right:3px solid;
-    border-right-color: gray;
-    padding: 2px;
-    z-index: -1;
-    width: 2.5em;
-    height:1.6em;  
-  }
 
   .createnote{
     display: block;

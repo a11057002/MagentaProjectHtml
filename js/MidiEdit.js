@@ -17,7 +17,7 @@ var mytrk = [];
 var b64, str, uri, myppqn = 96;
 var j = 0;
 var table = document.getElementById("mytable");
-var chordNum = 84;                                                                     //鍵盤音符數量
+var chordNum = 84 ;                                                                     //鍵盤音符數量
 var tempnote;
 var dragSource;
 var playnotebtn = document.getElementById("btn");
@@ -33,7 +33,8 @@ var cursorX;
 var resizeNote = false;
 var tempwidth,newWidth;
 var tablenode = "<td class ='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
-
+var whereToStart = 0;
+var whereToStop = 47;
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
@@ -93,7 +94,7 @@ function addtable() //增加表格
 }
 
 function dragStart(event) {
-  console.log(event);
+  // console.log(event);
   previousevent = event;
   positiondata = event.target.innerHTML.split(" ")[1];
   event.target.style.backgroundColor='rgba(60,0,220,0.5)';
@@ -102,13 +103,12 @@ function dragStart(event) {
 
 function allowDrop(event) {
   event.preventDefault();                                     //防止元素不給drop  取消默認值
-
 }
 
 function drop(event) {
   if(event.target.tagName != "TD")
   {
-    previousevent.target.style.backgroundColor = 'rgba(60,0,220,1)';
+    previousevent.target.style.backgroundColor = 'rgba(60,0,220,1)';      //原本位置不變
   }
   else
   {
@@ -138,24 +138,43 @@ function clickcontrol() { //增加按下音符動作
   {
     if(event.which == 1)
     {
+      if($('body').css('cursor')=='pointer')
+      {
+        var previousPlaceToStart = whereToStart;
+        whereToStart = $(this).index();
+        j=whereToStart;
+        if(whereToStart>0)
+        {
+          for (var i = 0; i < chordNum; i++)
+          {
+            if(previousPlaceToStart>0)
+            table.rows[i].cells[previousPlaceToStart-1].removeAttribute('style');
+            table.rows[i].cells[j-1].style.borderRightColor = 'red';
+          }
+        }
+      }
+      else
+      {
+          playnote($(this).parent().attr("name"));
+          tempnote = $(this).parent().attr("name");
 
-        playnote($(this).parent().attr("name"));
-        tempnote = $(this).parent().attr("name");
-        if($(this).html() == "")
-          $(this).html("<div class='createnote'  ondragstart = 'dragStart(event)' draggable='true' >.note(" + $(this).parent().attr('name') + ",64, 24 )</div>");  //24  tick旁邊有空白方便切割
-        // console.log($(this).html());
-        // console.log(tempnote);
-        if (col - $(this).index() < 16)
-        {
-          addtable();
-          start();
-        }
-        if(resizeNote)
-        {
-          noteToResize = $(this).children();
-          noteWidth = $(this).children().width();
-          cursorX = event.clientX;
-        }
+          if($(this).html() == "")
+            $(this).html("<div class='createnote'  ondragstart = 'dragStart(event)' draggable='true' >.note(" + $(this).parent().attr('name') + ",64, 24 )</div>");  //24  tick旁邊有空白方便切割
+          // console.log($(this).html());
+          // console.log(tempnote);
+
+          if (col - $(this).index() < 16)
+          {
+            addtable();
+            start();
+          }
+          if(resizeNote)
+          {
+            noteToResize = $(this).children();
+            noteWidth = $(this).children().width();
+            cursorX = event.clientX;
+          }
+      }
     }
   });
 
@@ -173,26 +192,13 @@ function clickcontrol() { //增加按下音符動作
 
       if(resizeNote)
         {
-          // console.log(event.offsetX);
-          // console.log(event.clientX);
-          // $(this).children().css('z-index', '-2');
-          tempwidth = noteWidth + (event.clientX -cursorX);
-          // console.log(tempwidth);
+          tempwidth = noteWidth + (event.clientX -cursorX);       //修改長度時 隨時更改
           noteToResize.css('width',  tempwidth + 'px');
         }
     }
-    // console.log(event);
-    // console.log($(this).offset());
-    // console.log(event.offsetX);
 
     if(event.target.className == "createnote")
     {
-        // if(event.offsetX <10 && event.offsetX > -1)
-        // {
-        //   $(this).children().css('cursor','w-resize');
-        //   $(this).children().attr('draggable','false');
-        //   resizeNote = true;
-        // }
         if (event.offsetX <= event.target.clientWidth && event.offsetX > event.target.clientWidth-10) {
           $(this).children().css('cursor','e-resize');
           $(this).children().attr('draggable','false');
@@ -226,9 +232,23 @@ function clickcontrol() { //增加按下音符動作
 
   $('.tt td').on('contextmenu',function()
   {
-    $(this).html("");
-    $(this).css('cursor','');
-    return false;
+    if($('body').css('cursor')=='pointer' && whereToStart < $(this).index())
+    {
+      for (var i = 0; i < chordNum; i++)
+      {
+        if(whereToStop<table.rows[0].cells.length)
+        table.rows[i].cells[whereToStop].removeAttribute('style');
+        table.rows[i].cells[$(this).index()].style.borderRightColor = 'blue';
+      }
+      whereToStop  = $(this).index();
+      return false;
+    }
+    else
+    {
+      $(this).html("");
+      $(this).css('cursor','');
+      return false;
+    }
   });
 }
 
@@ -241,41 +261,40 @@ function addnote()  //增加音符
   string = "trk1.smfSeqName('Music').ch(0).program(0x00)";
   string2 = "trk2.smfSeqName('Music').ch(0).program(0x00)";
 
-    $.each(table.rows[0].cells, function()    //每一行
+    for(j=whereToStart;j<=whereToStop;j++)
     {
-        allTickPrevious+=24;
+      allTickPrevious+=24;
 
-        lengthOfString = string.length;
+      lengthOfString = string.length;
 
 
-        if(lengthOfString > 40000)
-        {
-          if(string2 == "trk2.smfSeqName('Music').ch(0).program(0x00)")
-          {
-            console.log(allTickPrevious);
-            string2 += ".tick(" + allTickPrevious + ")";
-          }
-          string2 += ".tick(24)";
-        }
-        else {
-          string += ".tick(24)";
-        }
-
-      for(;i<chordNum;i++)
+      if(lengthOfString > 40000)
       {
-        if(lengthOfString > 40000)
+        if(string2 == "trk2.smfSeqName('Music').ch(0).program(0x00)")
         {
-          string2 += table.children[i].children[0].children[j].innerText;
+          console.log(allTickPrevious);
+          string2 += ".tick(" + allTickPrevious + ")";
         }
-        else
-        {
-            string += table.children[i].children[0].children[j].innerText;
-        }
+        string2 += ".tick(24)";
       }
-      j++;
-      i=0;
-    });
+      else if(j!=whereToStart)
+      {
+        string += ".tick(24)";
+      }
 
+    for(;i<chordNum;i++)
+    {
+      if(lengthOfString > 40000)
+      {
+          string2 += table.children[i].children[0].children[j].innerText;
+      }
+      else
+      {
+          string += table.children[i].children[0].children[j].innerText;
+      }
+    }
+    i=0;
+    }
 
  }
 
@@ -300,20 +319,15 @@ function createSMF() //建立音樂
 
   $('#script0').remove();
   $('#script1').remove();
-  $("body").append("<script id='script0'>" + string + ".tick(24).smfEndOfTrack();</script\>");
-  $("body").append("<script id='script1'>" + string2 + ".tick(24).smfEndOfTrack();</script\>");
+  $("body").append("<script id='script0'>" + string + ".smfEndOfTrack();</script\>");       //第一個track音符
+  $("body").append("<script id='script1'>" + string2 + ".smfEndOfTrack();</script\>");      //第二個track音符
   // console.log(string2);
 
   var smftemp = smf;
   str = smftemp.dump(); // MIDI file dumped as a string
 
   b64 = JZZ.lib.toBase64(str); // convert to base-64 string
-  console.log(string);
-  console.log(smftemp);
-  console.log((smftemp[0][0]).dd);
-  // console.log("str= " + str);
-  // console.log(str.length);
-  console.log(b64);
+  uri = 'data:audio/midi;base64,' + b64;
 }
 
 function clear() //清除目前
@@ -326,6 +340,7 @@ function load(data, name) //播放偵測
 {
   try {
     player = JZZ.MIDI.SMF(data).player();
+    player.loop(true);
     player.connect(tools);
     // console.log(tools);
     player.onEnd = function() {
@@ -375,8 +390,6 @@ function fromBase64() //轉為b64格式
 }
 
 function exportMidi() {
-  var uri = 'data:audio/midi;base64,' + b64;
-  // console.log(b64);
   location.href = uri;
 }
 
@@ -404,6 +417,7 @@ function createImport(data) {
     $(this)[0].className = "";
   });
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
+  console.log(mysmf.toString());
   var inputNoteString;
   mytrk = [];
   string = "";
@@ -458,31 +472,39 @@ function createImport(data) {
         }
       }
       console.log(j+"/" + smfSplitString.length);
-      // progessbar.innerText = j +  "/" +smfSplitString.length;
-      // console.log(smfSplitString[j]);
       j++;
-      // if (j == 6000)
-      //   return false;
     });
     i++;
     mysmfTick = 0;                                    //重設 讓下一個track用
-    // load(mysmf.dump(),'base');
   });
-  console.log(inputNoteString);
   start();
    // alert("Finish input");
 }
 
 
 function run() {
+  j = whereToStart;
   val = document.getElementsByName("BPM_val")[0].value;
   var id = setInterval(frame, (60 / val) * 250);
+
+    for (var i = 0; i < chordNum; i++)
+    {
+      if(whereToStart>0)
+        table.rows[i].cells[j-1].removeAttribute('style');
+      table.rows[i].cells[j].style.borderRightColor = 'red';
+
+    }
+
+
   playnotebtn.disabled = true;
   pausenotebtn.disabled = false;
   rerunnotebtn.disabled = false;
   clearnotebtn.disabled = true;
 
   function frame() {
+    for (var k = 0; k < chordNum; k++) {
+      table.rows[k].cells[0].removeAttribute('style');
+    }
     pausenotebtn.addEventListener("click", function() {
       clearInterval(id);
       pausenotebtn.disabled = true;
@@ -490,39 +512,63 @@ function run() {
       clearnotebtn.disabled = true;
     });
     rerunnotebtn.addEventListener("click", function() {
-      var temp = j - 1;
+      var temp = j;
       clearInterval(id);
       for (var i = 0; i < chordNum; i++) {
         table.rows[i].cells[temp].removeAttribute('style');
       }
-      j = 0;
+      if(whereToStart>0)
+      for (var i = 0; i < chordNum; i++) {
+        table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
+      }
       playnotebtn.disabled = false;
       clearnotebtn.disabled = false;
       pausenotebtn.disabled = true;
       rerunnotebtn.disabled = true;
     });
 
-    if (j < table.rows[0].cells.length) {
+    if (j < whereToStop) {
       if (j != 0) {
         for (var k = 0; k < chordNum; k++) {
-          table.rows[k].cells[j - 1].removeAttribute('style');
+          table.rows[k].cells[j].removeAttribute('style');
         }
       }
       for (var i = 0; i < chordNum; i++) {
-        table.rows[i].cells[j].style.borderRightColor = 'red';
+        table.rows[i].cells[j+1].style.borderRightColor = 'red';
       }
       j++;
     } else {
-      clearInterval(id);
-      for (var k = 0; k < chordNum; k++) {
-        table.rows[k].cells[table.rows[0].cells.length - 1].removeAttribute('style');
+      // clearInterval(id);
+      // for (var k = 0; k < chordNum; k++) {
+      //   table.rows[k].cells[table.rows[0].cells.length - 1].removeAttribute('style');
+      // }
+      // if(whereToStart>0)
+      // for (var i = 0; i < chordNum; i++) {
+      //   table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
+      // }
+      // j = 0;
+      // playnotebtn.disabled = false;
+      // clearnotebtn.disabled = false;
+      // pausenotebtn.disabled = true;
+      // rerunnotebtn.disabled = true;
+      j = whereToStart;
+      for (var i = 0; i < chordNum; i++)
+      {
+        if(whereToStart>0)
+        table.rows[i].cells[j-1].removeAttribute('style');
+        table.rows[i].cells[j].style.borderRightColor = 'red';
+
       }
-      j = 0;
-      playnotebtn.disabled = false;
-      clearnotebtn.disabled = false;
-      pausenotebtn.disabled = true;
-      rerunnotebtn.disabled = true;
     }
+  }
+}
+
+function mouseToChoose()                //變換鼠標樣式
+{
+  if($('#select').val()=='選取')
+    $('body').css('cursor','pointer');
+  else {
+    $('body').css('cursor','default');
   }
 }
 
