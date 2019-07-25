@@ -34,7 +34,7 @@ var resizeNote = false;
 var tempwidth,newWidth;
 var tablenode = "<td class ='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
 var whereToStart = 0;
-var whereToStop = 47;
+var whereToStop = 46;
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
@@ -102,13 +102,15 @@ function dragStart(event) {
 }
 
 function allowDrop(event) {
-  event.preventDefault();                                     //防止元素不給drop  取消默認值
+  event.preventDefault();
+   //防止元素不給drop  取消默認值
 }
 
 function drop(event) {
   if(event.target.tagName != "TD")
   {
-    previousevent.target.style.backgroundColor = 'rgba(60,0,220,1)';      //原本位置不變
+    previousevent.target.style.backgroundColor = 'rgba(60,0,220,1)';
+    //原本位置不變
   }
   else
   {
