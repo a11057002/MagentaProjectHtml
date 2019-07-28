@@ -18,7 +18,7 @@
     <input class="tool-btn" id="btn" type="button" value="播放" onclick="fromBase64()">
     <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()">
     <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()">
-    <input class="tool-btn" id="btn4" type="button" value="清除全部" >
+    <input class="tool-btn" id="btn4" type="button" value="清除全部">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     音色:   
     <select id='tone' value='音色切換' onchange="changeTone()">
@@ -62,7 +62,7 @@
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     音量控制:
-    <input style="height: 10px;" type="range"id="velocity" min="1" max = "120" >
+    <input style="height: 10px;" type="range"id="velocity" min="1" max = "120" onchange="changeVelocity()">
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     匯入:
@@ -85,9 +85,6 @@
       </td>
     </table>
   </div>
-  <!-- <div  style="text-align:center;color:white;height:3%;width:20%;left:40%;position:absolute;top:40%; border: 1px solid white;background-Color:black;">
-    <a id='progessbar'> </a>
-  </div> -->
 </body>
 <script>
 
@@ -104,16 +101,13 @@
 // }
 
 // var worker = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"])));
-let worker = null;
+var worker = new Worker('../js/worker.js');;
 document.addEventListener("DOMContentLoaded", function()
 {
-var worker = new Worker('../js/worker.js');
-worker.onmessage = (e => ViaReceiver.OnMessage(e.data));
-ViaReceiver.postMessage = (data => worker.postMessage(data));
-worker.postMessage("start");
+  worker.onmessage = (e => ViaReceiver.OnMessage(e.data));
+  ViaReceiver.postMessage = (data => worker.postMessage(data));
+  worker.postMessage("start");
 });
-// worker.addEventListener('DOMContentLoaded','worker_function',false);
-
 </script>
 <script src="../js/MidiEdit.js"></script>
 </html>

@@ -16,33 +16,32 @@ var tablett = document.getElementsByClassName('tt');
 var progessbar = document.getElementById('progessbar');
 var clientWidth = document.body.clientWidth; //取得螢幕寬度
 var smf = new JZZ.MIDI.SMF(1, 96);
-var trk0 = new JZZ.MIDI.SMF.MTrk();
-var trk1 = new JZZ.MIDI.SMF.MTrk();
+var trk = new Array();
 var chordNum = 96;                                                                     //鍵盤音符數量
-var mytrk = [];
 var b64, str, uri, myppqn = 96;
 var j = 0;
 var tempnote;
-var dragSource;
 var positiondata;       // drag previous tick data
 var previousevent;      // drag previous event
 var playing = false;
-var resizeNote = false;
-var noteTotal = 0;                                                                     //音符目前總量
+var resizeNote = false;                                                                 //音符目前總量
 var whereToStart = 0;
 var whereToStop = 0;
 var string = "";                                                                     // 存有按的音符
 var string2 = "";
+var string3 = "";
 var tempwidth,newWidth;
 var val;   //bpm value
 var cursorX;
 var player;
 var noteToResize;
 var noteWidth;
+var tablecount = 0;
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
 clearnotebtn.disabled = false;
+$("#progressbar").hide();
 
 function playnote(id) 
 {
@@ -120,6 +119,27 @@ function addtable()
     tablett[i].innerHTML+=tablenode + tablenode;
   }
 }
+function addtable2(count)
+{
+  /*
+    DO:
+        增加表格格數
+        目前一次增加2小節 
+
+  */
+  var tablenode = "<td class ='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>";
+  var tablestring="";
+  for(var j = 0;j<count;j++)
+  {
+    tablestring += tablenode + tablenode+ tablenode+ tablenode;
+  }
+  for(var i= 0; i <chordNum ; i++)
+  {
+    tablett[i].innerHTML+= tablestring;
+  }
+}
+
+
 
 function dragStart(event) 
 {
@@ -211,13 +231,9 @@ function clickcontrol()
                 決定結束位置
     
   */
-  var col = table.rows[0].cells.length;
-
   $('.tt td').attr('ondrop','drop(event)');
   $('.tt td').attr('ondragover','allowDrop(event)');
   $('.tt td').attr('ondragend','dragEnd(event)');
-  // $('body').attr('ondrop','drop(event)');
-  // $('body').attr('ondragover','allowDrop(event)');
 
   $('.tt td').on('mousedown', function(event)
   {
@@ -246,6 +262,7 @@ function clickcontrol()
       }
       else
       {
+          var col = table.rows[0].cells.length;
           playnote($(this).parent().attr("name"));
           tempnote = $(this).parent().attr("name");
 
@@ -354,17 +371,25 @@ function addnote()
   var j = 0;
   var allTickPrevious=0;
   var lengthOfString;
-  string = "trk1.smfSeqName('Music').ch(0).program("+$('#tone').val()+")";
-  string2 = "trk2.smfSeqName('Music').ch(0).program("+$('#tone').val()+")";
-
+  string = "trk[1].smfSeqName('Music').ch(0)";
+  string2 = "trk[2].smfSeqName('Music').ch(0)";
+  string3 = "trk[3].smfSeqName('Music').ch(0)";
     for(j=whereToStart;j<=whereToStop;j++)
     {
       allTickPrevious+=24;
       lengthOfString = string.length;
 
-      if(lengthOfString > 40000)
+      if(string2.length>40000)
       {
-        if(string2 == "trk2.smfSeqName('Music').ch(0).program("+$('#tone').val()+")")
+         if(string3 == "trk[3].smfSeqName('Music').ch(0)")
+        {
+          string3 += ".tick(" + allTickPrevious + ")";
+        }
+        string3 += ".tick(24)";
+      }
+      else if(lengthOfString > 40000)
+      {
+        if(string2 == "trk[2].smfSeqName('Music').ch(0)")
         {
           string2 += ".tick(" + allTickPrevious + ")";
         }
@@ -377,7 +402,9 @@ function addnote()
 
     for(;i<chordNum;i++)
     {
-      if(lengthOfString > 40000)
+      if(string2.length>40000)
+          string3 += table.children[i].children[0].children[j].innerText;
+      else if(lengthOfString > 40000)
       {
           string2 += table.children[i].children[0].children[j].innerText;
       }
@@ -409,19 +436,23 @@ function createSMF()
         將字串轉為b64格式
   */
   smf = new JZZ.MIDI.SMF(1, 96);
-  trk0 = new JZZ.MIDI.SMF.MTrk();
-  trk1 = new JZZ.MIDI.SMF.MTrk();
-  trk2 = new JZZ.MIDI.SMF.MTrk();
-  smf.push(trk0);
-  smf.push(trk1);
-  smf.push(trk2);
+  trk[0] = new JZZ.MIDI.SMF.MTrk();
+  trk[1] = new JZZ.MIDI.SMF.MTrk();
+  trk[2] = new JZZ.MIDI.SMF.MTrk();
+  trk[3] = new JZZ.MIDI.SMF.MTrk();
+  smf.push(trk[0]);
+  smf.push(trk[1]);
+  smf.push(trk[2]);
+  smf.push(trk[3]);
   val = document.getElementsByName("BPM_val")[0].value;
-  trk0.smfBPM(val); //speed
+  trk[0].smfBPM(val); //speed
 
   $('#script0').remove();
   $('#script1').remove();
+  $('#script2').remove();
   $("body").append("<script id='script0'>" + string + ".smfEndOfTrack();</script\>");       //第一個track音符
   $("body").append("<script id='script1'>" + string2 + ".smfEndOfTrack();</script\>");      //第二個track音符
+  $("body").append("<script id='script1'>" + string3 + ".smfEndOfTrack();</script\>");      //第二個track音符
   var smftemp = smf;
   str = smftemp.dump(); // MIDI file dumped as a string
   b64 = JZZ.lib.toBase64(str); // convert to base-64 string
@@ -554,6 +585,7 @@ function importMidi()
     };
     reader.readAsArrayBuffer(f);
   }
+
 }
 
 function createImport(data) 
@@ -568,7 +600,6 @@ function createImport(data)
           新建音符表格
           將新的檔案以mysmf製作音源
   */
-
   clear();                                                                //清除正在播放
   createTable();
   // $.each($(".highlighted"), function(index) 
@@ -576,17 +607,16 @@ function createImport(data)
   //   $(this)[0].className = "";
   // });
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
+  // worker.postMessage(mysmf.toString());
   var inputNoteString;
-  mytrk = [];
   string = "";
   myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
+  addtable2((Math.ceil(((parseInt(mysmf[1].toString().split("\n")[mysmf[1].toString().split("\n").length-1].split(":")[0])/(myppqn/96)/384)-3)/4))); //增加全部table
   var i = 0;                                                              //track數量
   var mysmfTick = 0;                                                      //存目前到第幾個tick
-
   $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]);     //將BPM放入左上
   $.each(mysmf, function() 
   {                                                                                                                           //對每個track做動作
-    mytrk[i] = new JZZ.MIDI.SMF.MTrk();                                                                                       //根據track個數push
     var smfSplitString = mysmf[i].toString().split("\n");                                                                     //將每個 動作切開
     var j = 0;
     var ticktemp = "";
@@ -613,23 +643,11 @@ function createImport(data)
       {                             
         var calculateTick = parseInt((mysmfTick-inputNoteString[note])/(24*myppqn/96));
         var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",0x60, "+ parseInt(24*calculateTick) +" )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
-
         if ((-note + 95) > -1)                                                                                                  //音符不得<0
         {         
-          try
-          {
-            document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].innerHTML = addNoteString;
-          }
-          catch(e)
-          {
-            addtable();
-            addtable();
-          }
-          finally
-          {
-            document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].innerHTML = addNoteString;
-            document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))].children[0].style.width = 40*calculateTick + 7*(calculateTick-1);
-          }
+            var mytempnote = document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))];
+            mytempnote.innerHTML = addNoteString;  
+            mytempnote.children[0].style.width = 40*calculateTick + 7*(calculateTick-1);      
         }
       }
       console.log(j+"/" + smfSplitString.length);
@@ -765,23 +783,7 @@ function changeVelocity()
       DO:
           更改音量大小
     */
-  var i = 0;
-  var j = 0;
-    for(j=0;j<table.rows[0].cells.length;j++)
-    {
-      for(;i<chordNum;i++)
-      {
-        if(table.children[i].children[0].children[j].innerText)
-        {
-            var aaa = table.children[i].children[0].children[j].innerText.split(',')
-            table.children[i].children[0].children[j].innerHTML = "<div class='createnote'  ondragstart = 'dragStart(event)' draggable='true' >"+ aaa[0] + ","+ $('#velocity').val() +"," + aaa[2] +" ";
-        }
-      }
-        
-
-      i=0;
-    }
-
+     port.volumeMSB(0,$("#velocity").val());
 }
 
 $(function() 
