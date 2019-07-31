@@ -38,6 +38,9 @@ var noteToResize;
 var noteWidth;
 var tablecount = 0;
 var resume =false;
+var followControl = 0;
+var id; 
+var resumeTick;
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
@@ -511,6 +514,17 @@ function playStop()
   playing = false;
   playnotebtn.innerHTML = "Play";
   playnotebtn.setAttribute("onclick", "fromBase64()");
+      clearInterval(id);
+        for (var i = 0; i < chordNum; i++)
+        {
+           if(whereToStart>0)
+              table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
+           table.rows[i].cells[resumeTick].removeAttribute('style');
+        }
+      playnotebtn.disabled = false;
+      clearnotebtn.disabled = false;
+      pausenotebtn.disabled = true;
+      rerunnotebtn.disabled = true;
 }
 
 function playPause()
@@ -522,6 +536,9 @@ function playPause()
   player.pause();
   playing = false;
   playnotebtn.setAttribute("onclick", "continuePlay()");
+  pausenotebtn.disabled = true;
+  playnotebtn.disabled = false;
+  clearnotebtn.disabled = true;
 }
 
 function continuePlay()
@@ -571,7 +588,7 @@ function importMidi()
     DO:
         讀取midi黨
   */
-  $("#progressbar").show();
+  
   var data;
   if (window.FileReader)
   {
@@ -678,9 +695,8 @@ function mouseToChoose()                //變換鼠標樣式
 {
   /*
   DO:
-  更改鼠標樣式
-
-  選取範圍時變為Pointer
+    更改鼠標樣式
+    選取範圍時變為Pointer
   */
   if($('#select').val()=='選取')
   $('body').css('cursor','pointer');
@@ -691,8 +707,8 @@ function mouseToChoose()                //變換鼠標樣式
 function changeTone()
 {
   /*
-  DO:
-  更改音色
+    DO:
+      更改音色
   */
   port.ch(0).program($('#tone').val());
 
@@ -701,14 +717,18 @@ function changeTone()
 function changeVelocity()
 {
   /*
-  DO:
-  更改音量大小
+    DO:
+      更改音量大小
   */
   port.volumeMSB(0,$("#velocity").val());
 }
 
 function clearRange()
 {
+   /*
+    DO:
+      清除選取範圍
+  */
   whereToStart = 0;
   whereToStop  = table.rows[0].cells.length-1;
   for(j=0;j<whereToStop;j++)
@@ -719,16 +739,39 @@ function clearRange()
 
 }
 
-function myscroll()
+function follow()
 {
-  console.log($('#scrolltable').scrollLeft());
+   /*
+     DO:
+        跟隨模式轉換
+  */
+  if($('#follow').val() == '自動')
+  {
+    followControl = 1;
+  }
+  else if($('#follow').val() == '分頁')
+  {
+    followControl = 2;
+  }
+  else
+  {
+    followControl = 0;
+  }
 }
+
 
 function run()
 {
   j = whereToStart;
+  var scrollCount = (whereToStart-16)*46;
+  var pageCount = 1;
   val = document.getElementsByName("BPM_val")[0].value;
-  var id = setInterval(frame, (60 / val) * 250);
+  if(followControl == 1)
+    $('#scrolltable').scrollLeft(scrollCount);
+  else if (followControl == 2)
+    $('#scrolltable').scrollLeft(scrollCount+(8*46));
+
+   id = setInterval(frame, (60 / val) * 250);
 
   for (var i = 0; i < chordNum; i++)
   {
@@ -744,38 +787,22 @@ function run()
 
   function frame()
   {
-    var resumeTick;
+    scrollCount += 46;
+    pageCount++;
+    if(followControl == 1)
+    {
+      $('#scrolltable').scrollLeft(scrollCount);
+    }
+    else if(followControl == 2)
+    {
+      if((pageCount % 32) == 0)
+        $('#scrolltable').scrollLeft(scrollCount+(14*46));
+    }
     for (var k = 0; k < chordNum; k++) 
 
     {
       table.rows[k].cells[0].removeAttribute('style');
     }
-    pausenotebtn.addEventListener("click", function()
-    {
-      clearInterval(id);
-      pausenotebtn.disabled = true;
-      playnotebtn.disabled = false;
-      clearnotebtn.disabled = true;
-    });
-
-    rerunnotebtn.addEventListener("click", function()
-    {
-      var temp = j;
-      clearInterval(id);
-      for (var i = 0; i < chordNum; i++)
-      {
-        table.rows[i].cells[temp].removeAttribute('style');
-      }
-      if(whereToStart>0)
-        for (var i = 0; i < chordNum; i++)
-        {
-           table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
-        }
-      playnotebtn.disabled = false;
-      clearnotebtn.disabled = false;
-      pausenotebtn.disabled = true;
-      rerunnotebtn.disabled = true;
-    });
 
     if (j < whereToStop)
     {
@@ -790,31 +817,11 @@ function run()
       {
         table.rows[i].cells[j+1].style.borderRightColor = 'red';
       }
-      resumeTick = j;
       j++;
+      resumeTick = j;
     }
     else
     {
-      // clearInterval(id);
-      // for (var k = 0; k < chordNum; k++) {
-      //   table.rows[k].cells[table.rows[0].cells.length - 1].removeAttribute('style');
-      // }
-      // if(whereToStart>0)
-      // for (var i = 0; i < chordNum; i++) {
-      //   table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
-      // }
-      // j = 0;
-      // playnotebtn.disabled = false;
-      // clearnotebtn.disabled = false;
-      // pausenotebtn.disabled = true;
-      // rerunnotebtn.disabled = true;
-      if(resume)
-      {
-        j = resumeTick;
-        resume = false;
-      }
-      else
-        j = whereToStart;
       for (var i = 0; i < chordNum; i++)
       {
         if(whereToStart>0)
@@ -825,6 +832,7 @@ function run()
     }
   }
 }
+
 
 function mouseToChoose()                //變換鼠標樣式
 {
@@ -874,6 +882,22 @@ $(function()
   {
     clientWidth = document.body.clientWidth;
   }).resize();
+
+  $(document).keypress(function(e){
+
+    if(e.keyCode == 32 &&　playnotebtn.disabled == false)
+    {
+      fromBase64();
+    }
+    else  if(e.keyCode == 32 && playnotebtn.disabled == true)
+    {
+      playStop();
+      playnotebtn.disabled = false;
+      clearnotebtn.disabled = false;
+      pausenotebtn.disabled = true;
+      rerunnotebtn.disabled = true;
+    }
+  });
 
   $('#btn4').on('click',function()
   {
