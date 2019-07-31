@@ -37,11 +37,11 @@ var player;
 var noteToResize;
 var noteWidth;
 var tablecount = 0;
+var resume =false;
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
 clearnotebtn.disabled = false;
-$("#progressbar").hide();
 
 function playnote(id) 
 {
@@ -530,6 +530,7 @@ function continuePlay()
         繼續播放
   */
   player.resume();
+  resume = true;
   player.onEnd = function() {
   playing = false;
   playnotebtn.innerHTML = "Play";
@@ -680,6 +681,7 @@ function run()
 
   function frame() 
   {
+    var resumeTick;
     for (var k = 0; k < chordNum; k++) 
     {
       table.rows[k].cells[0].removeAttribute('style');
@@ -724,6 +726,7 @@ function run()
       {
         table.rows[i].cells[j+1].style.borderRightColor = 'red';
       }
+      resumeTick = j;
       j++;
     } 
     else 
@@ -741,7 +744,13 @@ function run()
       // clearnotebtn.disabled = false;
       // pausenotebtn.disabled = true;
       // rerunnotebtn.disabled = true;
-      j = whereToStart;
+      if(resume)
+      {
+        j = resumeTick;
+        resume = false;
+      }
+      else
+        j = whereToStart;
       for (var i = 0; i < chordNum; i++)
       {
         if(whereToStart>0)
@@ -785,6 +794,7 @@ function changeVelocity()
     */
      port.volumeMSB(0,$("#velocity").val());
 }
+
 
 $(function() 
 {
