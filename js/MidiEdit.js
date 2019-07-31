@@ -620,6 +620,7 @@ function importMidi()
     };
     reader.readAsArrayBuffer(f);
   }
+  playStop();
 }
 
 function createImport(data)
