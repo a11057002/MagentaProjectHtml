@@ -536,6 +536,7 @@ function playPause()
   player.pause();
   playing = false;
   playnotebtn.setAttribute("onclick", "continuePlay()");
+  clearInterval(id);
   pausenotebtn.disabled = true;
   playnotebtn.disabled = false;
   clearnotebtn.disabled = true;
