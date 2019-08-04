@@ -39,8 +39,8 @@ var noteWidth;
 var tablecount = 0;
 var resume =false;
 var followControl = 0;
-var id; 
-var resumeTick;
+var id;
+var resumeTick = 0;
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
@@ -589,7 +589,7 @@ function importMidi()
     DO:
         讀取midi黨
   */
-  
+
   var data;
   if (window.FileReader)
   {
@@ -762,7 +762,6 @@ function follow()
   }
 }
 
-
 function run(data)
 { 
   if(!data)
@@ -804,7 +803,7 @@ function run(data)
       if((pageCount % 32) == 0)
         $('#scrolltable').scrollLeft(scrollCount+(14*46));
     }
-    for (var k = 0; k < chordNum; k++) 
+    for (var k = 0; k < chordNum; k++)
 
     {
       table.rows[k].cells[0].removeAttribute('style');
@@ -861,7 +860,7 @@ function changeTone()
           更改音色
     */
     port.ch(0).program($('#tone').val());
-  
+
 }
 
 function changeVelocity()
@@ -874,7 +873,7 @@ function changeVelocity()
 }
 
 
-$(function() 
+$(function()
 {
   /*
     DO:
