@@ -554,7 +554,7 @@ function continuePlay()
   playing = false;
   playnotebtn.innerHTML = "Play";
   }
-  run();
+  run(1);
 }
 
 function fromBase64() //轉為b64格式
@@ -567,7 +567,7 @@ function fromBase64() //轉為b64格式
         製作音源
         播放音源
   */
-  run();
+  run(0);
   clear();
   addnote();
   createSMF();
@@ -605,10 +605,11 @@ function importMidi()
       }
       var changeText = function(){
           return new Promise(function(resolve,reject){
+            $("#progressbar").show();
             $("#progressbar").html('匯入中...(資料量:'+ JZZ.MIDI.SMF(data).toString().length +')');
             setTimeout(function(){
               resolve();
-            },100)
+            },10)
           })
       };
 
@@ -762,9 +763,12 @@ function follow()
 }
 
 
-function run()
-{
-  j = whereToStart;
+function run(data)
+{ 
+  if(!data)
+    j = whereToStart;
+  else
+    j = resumeTick;
   var scrollCount = (whereToStart-16)*46;
   var pageCount = 1;
   val = document.getElementsByName("BPM_val")[0].value;
