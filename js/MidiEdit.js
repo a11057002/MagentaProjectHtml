@@ -104,6 +104,7 @@ function start()
 
   */
   clickcontrol();
+  document.getElementById('maintable').scrollTop=document.body.clientHeight*0.8;
   whereToStart = 0;
   whereToStop =  table.rows[0].cells.length-1;
 }
@@ -246,7 +247,9 @@ function clickcontrol()
       if($('body').css('cursor')=='pointer')
       {
         if(playing)
+        {
            player.jump($(this).index()*24);
+        }
         else
         {
             var previousPlaceToStart = whereToStart;
@@ -742,6 +745,14 @@ function clearRange()
 
 }
 
+function clearTable()
+{
+   clear();
+    createTable();
+    if(player)
+      playStop();
+}
+
 function follow()
 {
    /*
@@ -880,11 +891,12 @@ $(function()
         設置背景大小
         防止誤觸關閉
   */
-  // $(window).bind('beforeunload', function (e) {
-  //               return '';
-  //       });
-  $(window).resize(function()
+  $(window).bind('beforeunload', function (e) {
+                return '';
+        });
+  $(window).resize(function(e)
   {
+
     clientWidth = document.body.clientWidth;
   }).resize();
 
@@ -903,12 +915,25 @@ $(function()
       rerunnotebtn.disabled = true;
     }
   });
-
-  $('#btn4').on('click',function()
-  {
-    clear();
-    createTable();
-    if(player)
-      playStop();
-  });
 });
+
+document.addEventListener('DOMContentLoaded', function (event) 
+{
+    document.body.style.zoom = 'reset';
+    document.addEventListener('keydown', function (event) 
+    {
+      if ((event.ctrlKey === true)  && (event.keyCode === 17 || event.keyCode === 107 || event.keyCode === 109 || event.keyCode === 187  || event.keyCode === 189))
+      {
+         event.preventDefault();
+      }
+    }, false);
+    document.addEventListener('mousewheel', function (event) 
+    {
+      if (event.ctrlKey === true) 
+      {
+        event.preventDefault();
+        return false;
+      }
+    }, {passive : false});
+}, false);
+
