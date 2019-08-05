@@ -9,22 +9,22 @@
 <script src="../js/receiver.js"></script>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" > 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" >
 </head>
 <body onload="createTable()">
   <div id="progressbar" style="background-Color:black;position:fixed;margin-top:25%;height:3%;width:20%;margin-left:40%;margin-right:40%;z-index:100;color:white;text-align:center;">
     匯入中...
   </div>
   <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
-    &nbsp;&nbsp;&nbsp;
+    &nbsp;
     速度:<input class="tool-btn" type="text" name="BPM_val" style="text-align:center;width:50px;margin-right: 5px;margin-left: 5px;" value="50">bpm
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
     <input class="tool-btn" id="btn" type="button" value="播放" onclick="fromBase64()">
     <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()">
     <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()">
     <input class="tool-btn" id="btn4" type="button" value="清除全部音符" onclick="clearTable()">
     <input class="tool-btn" id="btn5" type="button" value="清除選取範圍" onclick="clearRange()">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
     音色:
     <select id='tone' value='音色切換' onchange="changeTone()">
       <option value="0">Acousitc Piano</option>
@@ -58,25 +58,25 @@
       <option value="115">Wood Block</option>
     </select>
 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
     功能選取:
     <select id='select' value='選取功能' onchange="mouseToChoose()">
       <option value='編輯'>編輯音符</option>
       <option value='選取'>選取範圍</option>
     </select>
 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
     跟隨模式:
     <select id='follow' value="follow" class="tool-btn" type="select" onchange="follow()">
       <option value="手動">手動跟隨</option>
       <option value="自動">自動跟隨</option>
       <option value="分頁">分頁跟隨</option>
     </select>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
     音量控制:
     <input style="height: 10px;" type="range"id="velocity" min="1" max = "120" onchange="changeVelocity()">
 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;
     匯入:
     <input id="file" type="file" size="80" onchange="importMidi()">
     <input class="tool-btn" id="export" type="button" value="匯出" disabled onclick="exportMidi()">

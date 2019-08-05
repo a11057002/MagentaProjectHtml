@@ -157,7 +157,8 @@ function dragStart(event)
           顏色調為半透明
           鼠標格式改為抓取中
   */
-
+  console.log('start');
+  console.log(event);
   previousevent = event;
   event.target.style.backgroundColor='rgba(60,0,220,0.5)';
   event.target.style.cursor='grabbing';
@@ -195,9 +196,12 @@ function drop(event)
     {
       console.log(e);
     }
+    console.log($(this).index());
+    console.log('drop');
+    console.log(event.toElement.parentNode.attributes[1].nodeValue);
     previousevent.target.style.cursor='grab';
     positiondata = previousevent.target.innerHTML.split(" ")[1];
-    event.target.innerHTML = "<div style='width:" + ((positiondata/24*40) + (positiondata/24-1)*6) + "px' class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + event.path[1].attributes[1].nodeValue + ",0x60, "+ positiondata +" )</div>";
+    event.target.innerHTML = "<div style='width:" + ((positiondata/24*40) + (positiondata/24-1)*6) + "px' class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note("+event.toElement.parentNode.attributes[1].nodeValue+",0x60, "+ positiondata +" )</div>";
   }
   stopnote(tempnote);
 }
@@ -774,7 +778,7 @@ function follow()
 }
 
 function run(data)
-{ 
+{
   if(!data)
     j = whereToStart;
   else
@@ -917,23 +921,22 @@ $(function()
   });
 });
 
-document.addEventListener('DOMContentLoaded', function (event) 
+document.addEventListener('DOMContentLoaded', function (event)
 {
     document.body.style.zoom = 'reset';
-    document.addEventListener('keydown', function (event) 
+    document.addEventListener('keydown', function (event)
     {
       if ((event.ctrlKey === true)  && (event.keyCode === 17 || event.keyCode === 107 || event.keyCode === 109 || event.keyCode === 187  || event.keyCode === 189))
       {
          event.preventDefault();
       }
     }, false);
-    document.addEventListener('mousewheel', function (event) 
+    document.addEventListener('mousewheel', function (event)
     {
-      if (event.ctrlKey === true) 
+      if (event.ctrlKey === true)
       {
         event.preventDefault();
         return false;
       }
     }, {passive : false});
 }, false);
-
