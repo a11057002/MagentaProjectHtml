@@ -7,14 +7,12 @@
 <script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
 <script src="../js/bar.js"></script>
 <script src="../js/receiver.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" >
 </head>
 <body onload="createTable()">
-  <div id="progressbar" style="background-Color:black;position:fixed;margin-top:25%;height:3%;width:20%;margin-left:40%;margin-right:40%;z-index:100;color:white;text-align:center;">
-    匯入中...
-  </div>
   <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
     &nbsp;
     速度:<input class="tool-btn" type="text" name="BPM_val" style="text-align:center;width:50px;margin-right: 5px;margin-left: 5px;" value="50">bpm
@@ -80,6 +78,13 @@
     匯入:
     <input id="file" type="file" size="80" onchange="importMidi()">
     <input class="tool-btn" id="export" type="button" value="匯出" disabled onclick="exportMidi()">
+    &nbsp;
+
+    匯入範例音黨:
+    <select id='importExample' value="匯入範例" class="tool-btn" type="select" onchange="importExample()">
+        <option value=""></option>
+    </select>
+
   </div>
   <div id="maintable" style="overflow-x:hidden;overflow-y:auto;position:fixed; height:84%;top:7%;">
     <table style="width:100%">
@@ -88,14 +93,15 @@
         <table class="notec" style=" position:relative; width:100%;"id="mynote">
         </table>
       </td>
-      <td style="position:relative; attachment:fixed;">
-        <div id='scrolltable' style="overflow-y:hidden;width:100%;">
+      <td style="position:relative;">
+        <div id='scrolltable' style="overflow-y:hidden;width:100%;height: 45%;">
           <table class="notec" style=" width:100%;height: 100%;" id="mytable">
             <div id="playHead"></div>
           </table>
         </div>
       </td>
     </table>
+
   </div>
 </body>
 <script>
@@ -113,7 +119,7 @@
 // }
 
 // var worker = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"])));
-// var worker = new Worker('../js/worker.js');;
+// var worker = new Worker('../js/worker.js');
 // document.addEventListener("DOMContentLoaded", function()
 // {
 //   worker.onmessage = (e => ViaReceiver.OnMessage(e.data));
@@ -122,4 +128,40 @@
 // });
 </script>
 <script src="../js/MidiEdit.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
+
+
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyCHyjbrzjYzwdZPWek3AYBiBZpqNqfpXug",
+    authDomain: "magentahtml.firebaseapp.com",
+    databaseURL: "https://magentahtml.firebaseio.com",
+    projectId: "magentahtml",
+    storageBucket: "magentahtml.appspot.com",
+    messagingSenderId: "134118203853",
+    appId: "1:134118203853:web:a625b0ca239dfecf"
+  };
+  firebase.initializeApp(firebaseConfig);
+  // var storage = firebase.storage();
+  // storage.ref().child('midi/Ninelie.mid').getDownloadURL().then(
+  //   function(url) 
+  //   {
+  //     document.getElementById('fire').href = url;
+  //   });
+  var firestore = firebase.firestore();
+  firestore.collection('midi').get().then(
+    snap => 
+    {
+       const items = {}
+       snap.forEach(item =>
+        {
+          document.getElementById('importExample').innerHTML += "<option value = '"+  item.data().b64 + "'> " + item.id + " </option>";
+        });
+    }
+    );
+  
+</script>
 </html>

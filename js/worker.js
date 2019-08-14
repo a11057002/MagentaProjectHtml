@@ -10,7 +10,8 @@ self.addEventListener("message", e =>
 	{
 		importScripts("../js/object.js",
 					  "../js/property.js",
-					  "../js/controller.js");
+					  "../js/controller.js",
+					  "../github/JZZ-master/javascript/JZZ.js");
 		const documentt = via.document;
 		div = documentt.createElement("div");
 		div.style.color = "white";

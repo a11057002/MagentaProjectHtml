@@ -1,52 +1,51 @@
-
 JZZ.synth.Tiny.register('Synth');
 JZZ.synth.Tiny.register('Web Audio');
-var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!')); //MIDI
+var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!')); 
 var note = new Array("B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"); //音符陣列
 var port = JZZ().openMidiOut().or(function() {alert('Cannot open MIDI port!');});
 var table = document.getElementById("mytable");                                        //拿table
 var playnotebtn = document.getElementById("btn");
 var noteTable = document.getElementById("mynote");
-var playHead = document.getElementById("playHead");
 var pausenotebtn = document.getElementById("btn2");
 var rerunnotebtn = document.getElementById("btn3");
 var clearnotebtn = document.getElementById("btn4");
 var clearrangebtn = document.getElementById("btn5");
 var tablett = document.getElementsByClassName('tt');
-var progessbar = document.getElementById('progessbar');
-var clientWidth = document.body.clientWidth; //取得螢幕寬度
+var clientWidth = document.body.clientWidth;                                          //取得螢幕寬度
 var smf = new JZZ.MIDI.SMF(1, 96);
 var trk = new Array();
-var chordNum = 96;                                                                     //鍵盤音符數量
+var chordNum = 96;                                                                   //鍵盤音符數量
 var b64, str, uri, myppqn = 96;
 var j = 0;
 var tempnote;
-var positiondata;       // drag previous tick data
-var previousevent;      // drag previous event
+var positiondata;                                                                     // drag previous tick data
+var previousevent;                                                                    // drag previous event
 var playing = false;
-var resizeNote = false;                                                                 //音符目前總量
+var resizeNote = false;                                                               //音符目前總量
 var whereToStart = 0;
 var whereToStop = 0;
-var string = "";                                                                     // 存有按的音符
+var string = "";                                                                      // 存有按的音符
 var string2 = "";
 var string3 = "";
 var tempwidth,newWidth;
-var val;   //bpm value
+var BPMval;                                                                              //bpm value
 var cursorX;
 var player;
 var noteToResize;
 var noteWidth;
 var tablecount = 0;
-var resume =false;
+var resume = false;
 var followControl = 0;
-var id;
+var idOfSetInterval;
+var idOfSetInterval2;
 var resumeTick = 0;
+
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
 clearnotebtn.disabled = false;
 
-$("#progressbar").hide();
+
 function playnote(id)
 {
   /*
@@ -157,8 +156,6 @@ function dragStart(event)
           顏色調為半透明
           鼠標格式改為抓取中
   */
-  console.log('start');
-  console.log(event);
   previousevent = event;
   event.target.style.backgroundColor='rgba(60,0,220,0.5)';
   event.target.style.cursor='grabbing';
@@ -196,9 +193,6 @@ function drop(event)
     {
       console.log(e);
     }
-    console.log($(this).index());
-    console.log('drop');
-    console.log(event.toElement.parentNode.attributes[1].nodeValue);
     previousevent.target.style.cursor='grab';
     positiondata = previousevent.target.innerHTML.split(" ")[1];
     event.target.innerHTML = "<div style='width:" + ((positiondata/24*40) + (positiondata/24-1)*6) + "px' class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note("+event.toElement.parentNode.attributes[1].nodeValue+",0x60, "+ positiondata +" )</div>";
@@ -240,9 +234,9 @@ function clickcontrol()
                 決定結束位置
 
   */
-  $('.tt td').attr('ondrop','drop(event)');
-  $('.tt td').attr('ondragover','allowDrop(event)');
-  $('.tt td').attr('ondragend','dragEnd(event)');
+  // $('.tt td').attr('ondrop','drop(event)');
+  // $('.tt td').attr('ondragover','allowDrop(event)');
+  // $('.tt td').attr('ondragend','dragEnd(event)');
 
   $('.tt td').on('mousedown', function(event)
   {
@@ -252,7 +246,7 @@ function clickcontrol()
       {
         if(playing)
         {
-           player.jump($(this).index()*24);
+           whereToStart = $(this).index();
         }
         else
         {
@@ -279,6 +273,7 @@ function clickcontrol()
 
           if($(this).html() == "")
             $(this).html("<div class='createnote'  ondragstart = 'dragStart(event)' draggable='true' >.note(" + $(this).parent().attr('name') + ",0x60, 24 )</div>");  //24  tick旁邊有空白方便切割
+          console.log($(this).html());
           if (col - $(this).index() < 16)
           {
             addtable();
@@ -345,6 +340,7 @@ function clickcontrol()
       tempwidth = 0;
       newWidth = 0;
     }
+    console.log($(this).html());
   });
 
   $('.tt td').on('contextmenu',function()
@@ -385,47 +381,72 @@ function addnote()
   string = "trk[1].smfSeqName('Music').ch(0)";
   string2 = "trk[2].smfSeqName('Music').ch(0)";
   string3 = "trk[3].smfSeqName('Music').ch(0)";
-    for(j=whereToStart;j<=whereToStop;j++)
-    {
-      allTickPrevious+=24;
-      lengthOfString = string.length;
+  BPMval = document.getElementsByName("BPM_val")[0].value;
+  var start = whereToStart;
 
-      if(string2.length>40000)
-      {
-         if(string3 == "trk[3].smfSeqName('Music').ch(0)")
-        {
-          string3 += ".tick(" + allTickPrevious + ")";
-        }
-        string3 += ".tick(24)";
-      }
-      else if(lengthOfString > 40000)
-      {
-        if(string2 == "trk[2].smfSeqName('Music').ch(0)")
-        {
-          string2 += ".tick(" + allTickPrevious + ")";
-        }
-        string2 += ".tick(24)";
-      }
-      else if(j!=whereToStart)
-      {
-        string += ".tick(24)";
-      }
-
+  idOfSetInterval2 =  setInterval(function ()
+  {
+    if(start <= whereToStop)
     for(;i<chordNum;i++)
     {
-      if(string2.length>40000)
-          string3 += table.children[i].children[0].children[j].innerText;
-      else if(lengthOfString > 40000)
-      {
-          string2 += table.children[i].children[0].children[j].innerText;
-      }
-      else
-      {
-          string += table.children[i].children[0].children[j].innerText;
-      }
+        var notett = table.children[i].children[0].children[start].innerText.substring(6,18).split(",");
+        // console.log(notett);
+        if(notett != "")
+        port.note(0,notett[0],60).wait((60 / BPMval) * 250 *(notett[2]/24)).noteOff(0,notett[0]);
+      console.log((60 / BPMval) * 250*(notett[2]/24));
+      console.log((60 / BPMval)*250);
     }
-    i=0;
+    else
+    {
+      start = whereToStart-1;
+      clearInterval(idOfSetInterval);
+      run();
     }
+    start++;
+    i=0;  
+  }
+ ,(60 / BPMval)*250);
+    // for(j=0;j<=whereToStop;j++)
+    // {
+    //   allTickPrevious+=24;
+    //   lengthOfString = string.length;
+
+    //   if(string2.length>40000)
+    //   {
+    //      if(string3 == "trk[3].smfSeqName('Music').ch(0)")
+    //     {
+    //       string3 += ".tick(" + allTickPrevious + ")";
+    //     }
+    //     string3 += ".tick(24)";
+    //   }
+    //   else if(lengthOfString > 40000)
+    //   {
+    //     if(string2 == "trk[2].smfSeqName('Music').ch(0)")
+    //     {
+    //       string2 += ".tick(" + allTickPrevious + ")";
+    //     }
+    //     string2 += ".tick(24)";
+    //   }
+    //   else if(j!=whereToStart)
+    //   {
+    //     string += ".tick(24)";
+    //   }
+
+    // for(;i<chordNum;i++)
+    // {
+    //   if(string2.length>40000)
+    //       string3 += table.children[i].children[0].children[j].innerText;
+    //   else if(lengthOfString > 40000)
+    //   {
+    //       string2 += table.children[i].children[0].children[j].innerText;
+    //   }
+    //   else
+    //   {
+    //       string += table.children[i].children[0].children[j].innerText;
+    //   }
+    // }
+    // i=0;
+    // }
 
  }
 
@@ -455,8 +476,8 @@ function createSMF()
   smf.push(trk[1]);
   smf.push(trk[2]);
   smf.push(trk[3]);
-  val = document.getElementsByName("BPM_val")[0].value;
-  trk[0].smfBPM(val); //speed
+  BPMval = document.getElementsByName("BPM_val")[0].value;
+  trk[0].smfBPM(BPMval); //speed
 
   $('#script0').remove();
   $('#script1').remove();
@@ -464,6 +485,9 @@ function createSMF()
   $("body").append("<script id='script0'>" + string + ".smfEndOfTrack();</script\>");       //第一個track音符
   $("body").append("<script id='script1'>" + string2 + ".smfEndOfTrack();</script\>");      //第二個track音符
   $("body").append("<script id='script1'>" + string3 + ".smfEndOfTrack();</script\>");      //第二個track音符
+  string = "";
+  string2 = "";
+  string3 = "";
   var smftemp = smf;
   str = smftemp.dump(); // MIDI file dumped as a string
   b64 = JZZ.lib.toBase64(str); // convert to base-64 string
@@ -476,7 +500,6 @@ function clear()
     DO:
         停止目前播放
   */
-  if (player) player.stop();
   playing = false;
 }
 
@@ -502,7 +525,6 @@ function load(data, name)
       playnotebtn.innerHTML = "Play";
     }
     playing = true;
-    player.play();
     $("#export").removeAttr("disabled");
   }
   catch (e)
@@ -521,12 +543,13 @@ function playStop()
   playing = false;
   playnotebtn.innerHTML = "Play";
   playnotebtn.setAttribute("onclick", "fromBase64()");
-      clearInterval(id);
+      clearInterval(idOfSetInterval);
+      clearInterval(idOfSetInterval2);
         for (var i = 0; i < chordNum; i++)
         {
            if(whereToStart>0)
-              table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
-           table.rows[i].cells[resumeTick].removeAttribute('style');
+          table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
+           table.rows[i].cells[resumeTick-1].removeAttribute('style');
         }
       playnotebtn.disabled = false;
       clearnotebtn.disabled = false;
@@ -540,10 +563,11 @@ function playPause()
     DO:
         暫停播放
   */
-  player.pause();
+  // player.pause();
   playing = false;
   playnotebtn.setAttribute("onclick", "continuePlay()");
-  clearInterval(id);
+  clearInterval(idOfSetInterval);
+  clearInterval(idOfSetInterval2);
   pausenotebtn.disabled = true;
   playnotebtn.disabled = false;
   clearnotebtn.disabled = true;
@@ -555,7 +579,7 @@ function continuePlay()
     DO:
         繼續播放
   */
-  player.resume();
+  // player.resume();
   resume = true;
   player.onEnd = function() {
   playing = false;
@@ -612,8 +636,15 @@ function importMidi()
       }
       var changeText = function(){
           return new Promise(function(resolve,reject){
-            $("#progressbar").show();
-            $("#progressbar").html('匯入中...(資料量:'+ JZZ.MIDI.SMF(data).toString().length +')');
+            Swal.fire({
+                        title:"Importing " + f.name,
+                        showConfirmButton: false,
+                        background: ' url(../resources/label.jpg)', 
+                        onBeforeOpen:() =>
+                        {
+                          Swal.showLoading();
+                        }
+                     })
             setTimeout(function(){
               resolve();
             },10)
@@ -648,6 +679,7 @@ function createImport(data)
   createTable();
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
   // worker.postMessage(mysmf.toString());
+
   var inputNoteString;
   string = "";
   myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
@@ -690,15 +722,19 @@ function createImport(data)
             mytempnote.children[0].style.width = 40*calculateTick + 7*(calculateTick-1);
         }
       }
-      console.log(j+"/" + smfSplitString.length);
+      // console.log(j+"/" + smfSplitString.length);
       j++;
     });
     i++;
     mysmfTick = 0;                                    //重設 讓下一個track用
   });
   start();
-  alert('匯入完成!');
-  $("#progressbar").hide();
+  Swal.fire(
+  {
+    type: 'success',
+    background: ' url(../resources/label.jpg)', 
+    title:"匯入完成"
+  });
 }
 
 function mouseToChoose()                //變換鼠標樣式
@@ -751,6 +787,10 @@ function clearRange()
 
 function clearTable()
 {
+  /*
+    DO:
+      清空所有表格
+  */
    clear();
     createTable();
     if(player)
@@ -785,20 +825,20 @@ function run(data)
     j = resumeTick;
   var scrollCount = (whereToStart-16)*46;
   var pageCount = 1;
-  val = document.getElementsByName("BPM_val")[0].value;
+  BPMval = document.getElementsByName("BPM_val")[0].value;
   if(followControl == 1)
     $('#scrolltable').scrollLeft(scrollCount);
   else if (followControl == 2)
     $('#scrolltable').scrollLeft(scrollCount+(8*46));
 
-   id = setInterval(frame, (60 / val) * 250);
+   idOfSetInterval = setInterval(frame, (60 / BPMval) * 250);
 
-  for (var i = 0; i < chordNum; i++)
-  {
-     if(whereToStart>0)
-     table.rows[i].cells[j-1].removeAttribute('style');
-     table.rows[i].cells[j].style.borderRightColor = 'red';
-  }
+  // for (var i = 0; i < chordNum; i++)
+  // {
+  //    if(whereToStart>0)
+  //    table.rows[i].cells[j-1].removeAttribute('style');
+  //    table.rows[i].cells[j].style.borderRightColor = 'red';
+  // }
 
   playnotebtn.disabled = true;
   pausenotebtn.disabled = false;
@@ -830,12 +870,12 @@ function run(data)
       {
         for (var k = 0; k < chordNum; k++)
         {
-          table.rows[k].cells[j].removeAttribute('style');
+          table.rows[k].cells[j-1].removeAttribute('style');
         }
       }
       for (var i = 0; i < chordNum; i++)
       {
-        table.rows[i].cells[j+1].style.borderRightColor = 'red';
+        table.rows[i].cells[j].style.borderRightColor = 'red';
       }
       j++;
       resumeTick = j;
@@ -844,10 +884,7 @@ function run(data)
     {
       for (var i = 0; i < chordNum; i++)
       {
-        if(whereToStart>0)
         table.rows[i].cells[j-1].removeAttribute('style');
-        table.rows[i].cells[j].style.borderRightColor = 'red';
-
       }
     }
   }
@@ -887,6 +924,55 @@ function changeVelocity()
      port.volumeMSB(0,$("#velocity").val());
 }
 
+function importExample()
+{
+  if($('#importExample :selected').text() != "")
+  Swal.fire({
+  title: 'Are you sure to import  '+ $('#importExample :selected').text() +' ?',
+  type: 'warning',
+  theme: 'borderless',
+  background: ' url(../resources/label.jpg)', 
+  padding: '3em',
+  showCancelButton:true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes',
+}).then((result) => 
+                      {
+                        if (result.value) 
+                        {
+                           var changeText = function()
+                            {
+                                  return new Promise(function(resolve,reject){
+                                  Swal.fire({
+                                    title:"Importing",
+                                    background: ' url(../resources/label.jpg)', 
+                                    showConfirmButton: false,
+                                    onBeforeOpen:() =>{
+                                    Swal.showLoading();
+                                    }
+                                  })
+                                  setTimeout(function(){
+                                    resolve();
+                                  },100)
+                                })
+                            };
+
+                            var myimport = async function(){
+                              await changeText();
+                              createImport(JZZ.lib.fromBase64($('#importExample').val()));  
+                            };
+
+                           myimport();
+                             
+                        }  
+                        else 
+                        $("#importExample")[0].selectedIndex = 0;
+
+      })
+
+
+}
 
 $(function()
 {
@@ -919,10 +1005,20 @@ $(function()
       rerunnotebtn.disabled = true;
     }
   });
+
+
+  $('body').attr('ondrop','drop(event)');
+  $('body').attr('ondragover','allowDrop(event)');
+  $('body').attr('ondragend','dragEnd(event)');
+
 });
 
 document.addEventListener('DOMContentLoaded', function (event)
 {
+  /*
+    DO:
+        禁止調整視窗縮放大小
+  */
     document.body.style.zoom = 'reset';
     document.addEventListener('keydown', function (event)
     {
