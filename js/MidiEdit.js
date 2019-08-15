@@ -1,6 +1,6 @@
 JZZ.synth.Tiny.register('Synth');
 JZZ.synth.Tiny.register('Web Audio');
-var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!')); 
+var tools = JZZ().or(report('Cannot start MIDI engine!')).openMidiOut().or(report('Cannot open MIDI Out!'));
 var note = new Array("B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"); //音符陣列
 var port = JZZ().openMidiOut().or(function() {alert('Cannot open MIDI port!');});
 var table = document.getElementById("mytable");                                        //拿table
@@ -381,31 +381,6 @@ function addnote()
   string = "trk[1].smfSeqName('Music').ch(0)";
   string2 = "trk[2].smfSeqName('Music').ch(0)";
   string3 = "trk[3].smfSeqName('Music').ch(0)";
-  BPMval = document.getElementsByName("BPM_val")[0].value;
-  var start = whereToStart;
-
-  idOfSetInterval2 =  setInterval(function ()
-  {
-    if(start <= whereToStop)
-    for(;i<chordNum;i++)
-    {
-        var notett = table.children[i].children[0].children[start].innerText.substring(6,18).split(",");
-        // console.log(notett);
-        if(notett != "")
-        port.note(0,notett[0],60).wait((60 / BPMval) * 250 *(notett[2]/24)).noteOff(0,notett[0]);
-      console.log((60 / BPMval) * 250*(notett[2]/24));
-      console.log((60 / BPMval)*250);
-    }
-    else
-    {
-      start = whereToStart-1;
-      clearInterval(idOfSetInterval);
-      run();
-    }
-    start++;
-    i=0;  
-  }
- ,(60 / BPMval)*250);
     // for(j=0;j<=whereToStop;j++)
     // {
     //   allTickPrevious+=24;
@@ -539,7 +514,7 @@ function playStop()
     DO:
         播放音樂
   */
-  player.stop();
+  // player.stop();
   playing = false;
   playnotebtn.innerHTML = "Play";
   playnotebtn.setAttribute("onclick", "fromBase64()");
@@ -600,9 +575,9 @@ function fromBase64() //轉為b64格式
   */
   run(0);
   clear();
-  addnote();
-  createSMF();
-  load(JZZ.lib.fromBase64(b64), 'Base64 data');
+  // addnote();
+  // createSMF();
+  // load(JZZ.lib.fromBase64(b64), 'Base64 data');
 }
 
 function exportMidi()
@@ -639,7 +614,7 @@ function importMidi()
             Swal.fire({
                         title:"Importing " + f.name,
                         showConfirmButton: false,
-                        background: ' url(../resources/label.jpg)', 
+                        background: ' url(../resources/label.jpg)',
                         onBeforeOpen:() =>
                         {
                           Swal.showLoading();
@@ -713,7 +688,7 @@ function createImport(data)
       }
       else if (mySplitString === "Note Of")                                                                                  //當指令為note off
       {
-        var calculateTick = parseInt((mysmfTick-inputNoteString[note])/(24*myppqn/96));
+        var calculateTick = Math.round((mysmfTick-inputNoteString[note])/(24*myppqn/96));
         var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",0x60, "+ parseInt(24*calculateTick) +" )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
         if ((-note + 95) > -1)                                                                                                  //音符不得<0
         {
@@ -732,7 +707,7 @@ function createImport(data)
   Swal.fire(
   {
     type: 'success',
-    background: ' url(../resources/label.jpg)', 
+    background: ' url(../resources/label.jpg)',
     title:"匯入完成"
   });
 }
@@ -819,12 +794,16 @@ function follow()
 
 function run(data)
 {
+  playing = true;
   if(!data)
     j = whereToStart;
   else
     j = resumeTick;
+
   var scrollCount = (whereToStart-16)*46;
   var pageCount = 1;
+  var start = whereToStart;
+  var count = 0;
   BPMval = document.getElementsByName("BPM_val")[0].value;
   if(followControl == 1)
     $('#scrolltable').scrollLeft(scrollCount);
@@ -847,6 +826,24 @@ function run(data)
 
   function frame()
   {
+    if(start <= whereToStop)
+    {
+      for(;count<chordNum;count++)
+      {
+          var notett = table.children[count].children[0].children[start].innerText.substring(6,18).split(",");
+          // console.log(notett);
+          if(notett != "")
+        port.note(0,notett[0],60).wait((60 / BPMval) * 250 *(notett[2]/24)-100).noteOff(0,notett[0]);
+      }
+    }
+    else
+    {
+      start = whereToStart-1;
+      clearInterval(idOfSetInterval);
+      run();
+    }
+    start++;
+    count=0;
     scrollCount += 46;
     pageCount++;
     if(followControl == 1)
@@ -928,25 +925,24 @@ function importExample()
 {
   if($('#importExample :selected').text() != "")
   Swal.fire({
-  title: 'Are you sure to import  '+ $('#importExample :selected').text() +' ?',
+  title: 'Are you sure to import  \n'+ $('#importExample :selected').text() +' ?',
   type: 'warning',
-  theme: 'borderless',
-  background: ' url(../resources/label.jpg)', 
+  background: ' url(../resources/label.jpg)',
   padding: '3em',
   showCancelButton:true,
   confirmButtonColor: '#3085d6',
   cancelButtonColor: '#d33',
   confirmButtonText: 'Yes',
-}).then((result) => 
+}).then((result) =>
                       {
-                        if (result.value) 
+                        if (result.value)
                         {
                            var changeText = function()
                             {
                                   return new Promise(function(resolve,reject){
                                   Swal.fire({
                                     title:"Importing",
-                                    background: ' url(../resources/label.jpg)', 
+                                    background: ' url(../resources/label.jpg)',
                                     showConfirmButton: false,
                                     onBeforeOpen:() =>{
                                     Swal.showLoading();
@@ -960,13 +956,13 @@ function importExample()
 
                             var myimport = async function(){
                               await changeText();
-                              createImport(JZZ.lib.fromBase64($('#importExample').val()));  
+                              createImport(JZZ.lib.fromBase64($('#importExample').val()));
                             };
 
                            myimport();
-                             
-                        }  
-                        else 
+
+                        }
+                        else
                         $("#importExample")[0].selectedIndex = 0;
 
       })
