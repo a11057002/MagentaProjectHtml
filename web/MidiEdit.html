@@ -13,18 +13,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" >
 </head>
 <body onload="createTable()">
-  <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-10px;" id=tools>
+  <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-30px;" id=tools>
     &nbsp;
     速度:<input class="tool-btn" type="text" name="BPM_val" style="text-align:center;width:50px;margin-right: 5px;margin-left: 5px;" value="50">bpm
     &nbsp;
-    <input class="tool-btn" id="btn" type="button" value="播放" onclick="fromBase64()">
-    <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()">
-    <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()">
-    <input class="tool-btn" id="btn4" type="button" value="清除全部音符" onclick="clearTable()">
-    <input class="tool-btn" id="btn5" type="button" value="清除選取範圍" onclick="clearRange()">
-    &nbsp;
     音色:
-    <select id='tone' value='音色切換' onchange="changeTone()">
+    <select class="tool-btn" id='tone' value='音色切換' onchange="changeTone()">
       <option value="0">Acousitc Piano</option>
       <option value="1">Bright Piano</option>
       <option value="2">Electric Grand Piano</option>
@@ -58,35 +52,42 @@
 
     &nbsp;
     功能選取:
-    <select id='select' value='選取功能' onchange="mouseToChoose()">
+    <select class="tool-btn" id='select' value='選取功能' onchange="mouseToChoose()">
       <option value='編輯'>編輯音符</option>
       <option value='選取'>選取範圍</option>
     </select>
 
     &nbsp;
     跟隨模式:
-    <select id='follow' value="follow" class="tool-btn" type="select" onchange="follow()">
+    <select class="tool-btn" id='follow' value="follow" type="select" onchange="follow()">
       <option value="手動">手動跟隨</option>
       <option value="自動">自動跟隨</option>
       <option value="分頁">分頁跟隨</option>
     </select>
     &nbsp;
     音量控制:
-    <input style="height: 10px;" type="range"id="velocity" min="1" max = "120" onchange="changeVelocity()">
-
+    <input class="tool-btn" style="height: 10px;width:50px;" type="range"id="velocity" min="1" max = "120" onchange="changeVelocity()">
+    &nbsp;
+    匯入範例音黨:
+    <select class="tool-btn" id='importExample' value="匯入範例" type="select" onchange="importExample()">
+      <option value=""></option>
+    </select>
     &nbsp;
     匯入:
-    <input id="file" type="file" size="80" onchange="importMidi()">
+    <input class="tool-btn" id="file" type="file" size="10" onchange="importMidi()">
     <input class="tool-btn" id="export" type="button" value="匯出" disabled onclick="exportMidi()">
-    &nbsp;
 
-    匯入範例音黨:
-    <select id='importExample' value="匯入範例" class="tool-btn" type="select" onchange="importExample()">
-        <option value=""></option>
-    </select>
+    <br>
+
+    &nbsp;
+    <input class="tool-btn" id="btn" type="button" value="播放" onclick="fromBase64()" style="width:100px; margin-top:15px;margin-left:20px;" >
+    <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()" style="width:100px;">
+    <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()" style="width:100px;">
+    <input class="tool-btn" id="btn4" type="button" value="清除全部音符" onclick="clearTable()" style="width:100px;">
+    <input class="tool-btn" id="btn5" type="button" value="清除選取範圍" onclick="clearRange()" style="width:100px;">
 
   </div>
-  <div id="maintable" style="overflow-x:hidden;overflow-y:auto;position:fixed; height:84%;top:7%;">
+  <div id="maintable" style="overflow-x:hidden;overflow-y:auto;position:fixed; height:84%;top:8%;">
     <table style="width:100%">
       <div></div>
       <td style="width: 148px; z-index: 2;" id="leftnotebar">
@@ -147,13 +148,13 @@
   firebase.initializeApp(firebaseConfig);
   // var storage = firebase.storage();
   // storage.ref().child('midi/Ninelie.mid').getDownloadURL().then(
-  //   function(url) 
+  //   function(url)
   //   {
   //     document.getElementById('fire').href = url;
   //   });
   var firestore = firebase.firestore();
   firestore.collection('midi').get().then(
-    snap => 
+    snap =>
     {
        const items = {}
        snap.forEach(item =>
@@ -162,6 +163,6 @@
         });
     }
     );
-  
+
 </script>
 </html>
