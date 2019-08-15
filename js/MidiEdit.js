@@ -383,7 +383,7 @@ function addnote()
   string3 = "trk[3].smfSeqName('Music').ch(0)";
   BPMval = document.getElementsByName("BPM_val")[0].value;
   var start = whereToStart;
-
+  var bpmHere = (60 / BPMval) * 250;
   idOfSetInterval2 =  setInterval(function ()
   {
     if(start <= whereToStop)
@@ -392,9 +392,7 @@ function addnote()
         var notett = table.children[i].children[0].children[start].innerText.substring(6,18).split(",");
         // console.log(notett);
         if(notett != "")
-        port.note(0,notett[0],60).wait((60 / BPMval) * 250 *(notett[2]/24)).noteOff(0,notett[0]);
-      console.log((60 / BPMval) * 250*(notett[2]/24));
-      console.log((60 / BPMval)*250);
+        port.note(0,notett[0],60).wait((bpmHere *(notett[2]/24)).noteOff(0,notett[0]); 
     }
     else
     {
@@ -405,7 +403,7 @@ function addnote()
     start++;
     i=0;  
   }
- ,(60 / BPMval)*250);
+ ,(bpmHere);
     // for(j=0;j<=whereToStop;j++)
     // {
     //   allTickPrevious+=24;
