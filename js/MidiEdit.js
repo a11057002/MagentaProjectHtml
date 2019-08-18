@@ -833,7 +833,7 @@ function run(data)
           var notett = table.children[count].children[0].children[start].innerText.substring(6,18).split(",");
           // console.log(notett);
           if(notett != "")
-        port.note(0,notett[0],60).wait((60 / BPMval) * 250 *(notett[2]/24)-100).noteOff(0,notett[0]);
+        port.note(0,notett[0],60).wait((60 / BPMval) * 250 *(notett[2]/24)).noteOff(0,notett[0]);
       }
     }
     else
