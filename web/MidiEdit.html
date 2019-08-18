@@ -14,7 +14,7 @@
 </head>
 <body onload="createTable()">
   <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-30px;" id=tools>
-    &nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     速度:<input class="tool-btn" type="text" name="BPM_val" style="text-align:center;width:50px;margin-right: 5px;margin-left: 5px;" value="50">bpm
     &nbsp;
     音色:
@@ -74,8 +74,8 @@
     </select>
     &nbsp;
     匯入:
-    <input class="tool-btn" id="file" type="file" size="10" onchange="importMidi()">
-    <input class="tool-btn" id="export" type="button" value="匯出" disabled onclick="exportMidi()">
+    <input class="tool-btn" id="file" type="file" size="10" onchange="importMidi()"  style="color:white;">
+    <input class="tool-btn" id="export" type="button" value="匯出" onclick="exportMidi()">
 
     <br>
 
