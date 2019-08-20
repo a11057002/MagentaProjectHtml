@@ -26,8 +26,15 @@ var resume = false;
 var followControl = 0;
 var idOfSetInterval,idOfSetInterval2;
 var resumeTick = 0;
+var string,string2,string3;
+var trk = new Array();
+var mycursor;
+var cursortype = {
+   'pointer' : "pointer",
+   'default' : "default"
+};
+var tickToPlay;
 // var player;
-
 
 pausenotebtn.disabled = true;
 rerunnotebtn.disabled = true;
@@ -220,11 +227,14 @@ function clickcontrol()
   {
     if(event.which == 1)
     {
-      if($('body').css('cursor')=='pointer')
+      if(mycursor=='pointer')
       {
         if(playing)
         {
-           whereToStart = $(this).index();
+           for (var i = 0; i < chordNum; i++)
+           table.rows[i].cells[tickToPlay-1].removeAttribute('style');
+           tickToPlay = $(this).index();
+
         }
         else
         {
@@ -250,7 +260,7 @@ function clickcontrol()
           tempnote = $(this).parent().attr("name");
 
           if($(this).html() == "")
-            $(this).html("<div class='createnote'  ondragstart = 'dragStart(event)' draggable='true' >.note(" + $(this).parent().attr('name') + ",0x60, 24 ,60  )</div>");  //24  tick旁邊有空白方便切割
+            $(this).html("<div class='createnote'  ondragstart = 'dragStart(event)' draggable='true' >.note(" + $(this).parent().attr('name') + ",0x60, 24 )</div>");  //24  tick旁邊有空白方便切割
           if (col - $(this).index() < 16)
           {
             addtable(1);
@@ -268,7 +278,7 @@ function clickcontrol()
 
   $('.tt td').on('mousemove',function(event)    //滑鼠拖曳
   {
-    if(event.which == 1 && $('body').css('cursor')!='pointer')
+    if(event.which == 1 && mycursor!='pointer')
     {
       if($(this).parent().attr("name") != tempnote)
       {
@@ -311,7 +321,7 @@ function clickcontrol()
       if(tempwidth<=46)
       {
         noteToResize.css('width', '40px');
-        noteToResize.html(".note(" + $(this).parent().attr('name') + ",0x60, 24");
+        noteToResize.html(".note(" + $(this).parent().attr('name') + ",0x60, 24 )");
       }
       else
       {
@@ -328,7 +338,7 @@ function clickcontrol()
 
   $('.tt td').on('contextmenu',function()
   {
-    if($('body').css('cursor')=='pointer' && whereToStart < $(this).index())
+    if( mycursor =='pointer' && whereToStart < $(this).index())
     {
       for (var i = 0; i < chordNum; i++)
       {
@@ -361,9 +371,9 @@ function addnote()
   var j = 0;
   var allTickPrevious=0;
   var lengthOfString;
-  var string = "trk[1].smfSeqName('Music').ch(0)";
-  var string2 = "trk[2].smfSeqName('Music').ch(0)";
-  var string3 = "trk[3].smfSeqName('Music').ch(0)";
+   string = "trk[1].smfSeqName('Music').ch(0)";
+   string2 = "trk[2].smfSeqName('Music').ch(0)";
+   string3 = "trk[3].smfSeqName('Music').ch(0)";
     for(j=0;j<=whereToStop;j++)
     {
       allTickPrevious+=24;
@@ -426,7 +436,6 @@ function createSMF()
         將字串轉為b64格式
   */
   var smf = new JZZ.MIDI.SMF(1, 96);
-  var trk = new Array();
   trk[0] = new JZZ.MIDI.SMF.MTrk();
   trk[1] = new JZZ.MIDI.SMF.MTrk();
   trk[2] = new JZZ.MIDI.SMF.MTrk();
@@ -438,12 +447,12 @@ function createSMF()
   BPMval = document.getElementsByName("BPM_val")[0].value;
   trk[0].smfBPM(BPMval); //speed
 
-  $('#script0').remove();
-  $('#script1').remove();
-  $('#script2').remove();
-  $("body").append("<script id='script0'>" + string + ".smfEndOfTrack();</script\>");       //第一個track音符
-  $("body").append("<script id='script1'>" + string2 + ".smfEndOfTrack();</script\>");      //第二個track音符
-  $("body").append("<script id='script1'>" + string3 + ".smfEndOfTrack();</script\>");      //第二個track音符
+  $("#script0").remove();
+  $("#script1").remove();
+  $("#script2").remove();
+  $("body").append("<script id='script0'>" + string + ".smfEndOfTrack();</script>");       //第一個track音符
+  $("body").append("<script id='script1'>" + string2 + ".smfEndOfTrack();</script>");      //第二個track音符
+  $("body").append("<script id='script2'>" + string3 + ".smfEndOfTrack();</script>");      //第二個track音符
   string = "";
   string2 = "";
   string3 = "";
@@ -501,14 +510,15 @@ function playStop()
   */
   // player.stop();
   playing = false;
+  resume = false;
   playnotebtn.innerHTML = "Play";
-  playnotebtn.setAttribute("onclick", "fromBase64()");
+  playnotebtn.setAttribute("onclick", "playSong()");
       clearTimeout(idOfSetInterval);
       clearTimeout(idOfSetInterval2);
         for (var i = 0; i < chordNum; i++)
         {
            if(whereToStart>0)
-          table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
+           table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
            table.rows[i].cells[resumeTick-1].removeAttribute('style');
         }
       playnotebtn.disabled = false;
@@ -525,6 +535,7 @@ function playPause()
   */
   // player.pause();
   playing = false;
+  resume = true;
   playnotebtn.setAttribute("onclick", "continuePlay()");
   clearTimeout(idOfSetInterval);
   clearTimeout(idOfSetInterval2);
@@ -540,7 +551,6 @@ function continuePlay()
         繼續播放
   */
   // player.resume();
-  resume = true;
   // player.onEnd = function() {
   // playing = false;
   // playnotebtn.innerHTML = "Play";
@@ -548,7 +558,7 @@ function continuePlay()
   run(1);
 }
 
-function fromBase64() //轉為b64格式
+function playSong() //轉為b64格式
 {
   /*
     DO:
@@ -558,11 +568,72 @@ function fromBase64() //轉為b64格式
         製作音源
         播放音源
   */
-  run(0);
   clear();
+  run(0);
   // addnote();
   // createSMF();
   // load(JZZ.lib.fromBase64(b64), 'Base64 data');
+}
+
+
+function upLoad()
+{
+
+  /*
+    DO:
+        上傳輸入密碼    
+        輸入檔案名稱
+  */
+  Swal.fire({
+    title:'請輸入上傳密碼!',
+    input:'text',
+    showCancelButton: true,
+  }).then((result)=>
+    {
+      if(result.value)
+      firestore.collection('password').get().then(snap =>
+        {
+           snap.forEach(item =>
+            {
+             if(item.id == 'pass')
+                 if(result.value == item.data().pass)
+                    {
+                       Swal.fire(
+                       {
+                         title:'輸入上傳檔案名稱',
+                         input:'text',
+                         showCancelButton: true,
+                       }).then((result)=>
+                                    {
+                                      if(result.value)
+                                      {
+                                        addnote();
+                                        createSMF();
+                                        firestore.collection('midi').doc(result.value).set(
+                                          {
+                                            'b64': b64
+                                          }); 
+                                        Swal.fire(
+                                          {
+                                            title:"上傳成功(重整後可看到)",
+                                            type:'success'
+                                          });
+                                      }
+                                    });
+                    }
+                 else
+                 {
+                  Swal.fire(
+                  {
+                    title:"密碼錯誤",
+                    type:'error'
+                  });
+                 }
+
+            })
+        });                                       
+    });
+
 }
 
 function exportMidi()
@@ -654,15 +725,24 @@ function createImport(data)
   createTable();
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
   // worker.postMessage(mysmf.toString());
-
+  console.log(mysmf);
+  console.log(mysmf.toString().split(" "));
+  console.log(JZZ.lib.toBase64(mysmf.dump()));
   var inputNoteString;
   var inputVolumeString;
+  var maxTick = 0;
   string = "";
   myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
-  addtable((Math.ceil(((parseInt(mysmf.toString().split("\n")[mysmf.toString().split("\n").length-1].split(":")[0])/(myppqn/96)/384)-3)/4))); //增加全部table
+  $.each(mysmf,function(e){
+    var temp = Math.ceil(mysmf[e].toString().split("\n")[mysmf[e].toString().split("\n").length-1].split(":")[0]/(myppqn/96)/16/24-3);
+    if(temp > maxTick)
+        maxTick = temp;
+  });
+  console.log(maxTick);
+  addtable(maxTick/4); //增加全部table
   var i = 0;                                                              //track數量
   var mysmfTick = 0;                                                      //存目前到第幾個tick
-  $("input[name='BPM_val']").val(mysmf[0].toString().split(" ")[(mysmf[0].toString().split(" ").indexOf("Tempo:")) + 1]);     //將BPM放入左上
+  $("input[name='BPM_val']").val(mysmf.toString().split(" ")[(mysmf.toString().split(" ").indexOf("Tempo:")) + 1]);     //將BPM放入左上
   $.each(mysmf, function()
   {                                                                                                                           //對每個track做動作
     var smfSplitString = mysmf[i].toString().split("\n");                                                                     //將每個 動作切開
@@ -671,8 +751,7 @@ function createImport(data)
     var note = "";
     var volume = "";
     inputNoteString = new Array(84);
-    inputVolumeString = new Array(84);
-      console.log(smfSplitString);                                                                                                                            //紀錄每個track 音符數
+    inputVolumeString = new Array(84);                                                                                                                      //紀錄每個track 音符數
       $.each(smfSplitString, function()
       {                                                                                                                       //對每個動作分析
       ticktemp = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":"));                                              //存目前tick
@@ -694,12 +773,12 @@ function createImport(data)
       else if (mySplitString === "Note Of")                                                                                  //當指令為note off
       {
         var calculateTick = Math.round((mysmfTick-inputNoteString[note])/(24*myppqn/96));
-        var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",0x60, "+ parseInt(24*calculateTick) +  " ," + inputVolumeString[note] +"   )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
+        var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",0x60, "+ parseInt(24*calculateTick) +"  )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
         if ((-note + 95) > -1)                                                                                                  //音符不得<0
         {
             var mytempnote = document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))];
             mytempnote.innerHTML = addNoteString;
-            mytempnote.children[0].style.width = 40*calculateTick + 7*(calculateTick-1);
+            mytempnote.children[0].style.width = 40*calculateTick + 6*(calculateTick-1);
         }
       }
       // console.log(j+"/" + smfSplitString.length);
@@ -717,7 +796,7 @@ function createImport(data)
   });
 }
 
-function mouseToChoose()                //變換鼠標樣式
+function mouseToChoose()                
 {
   /*
   DO:
@@ -725,9 +804,9 @@ function mouseToChoose()                //變換鼠標樣式
     選取範圍時變為Pointer
   */
   if($('#select').val()=='選取')
-  $('body').css('cursor','pointer');
+  mycursor = cursortype.pointer;
   else
-  $('body').css('cursor','default');
+  mycursor = cursortype.default;
 }
 
 function changeTone()
@@ -755,13 +834,14 @@ function clearRange()
     DO:
       清除選取範圍
   */
+  for (var k = 0; k < chordNum; k++)
+  {
+    if(whereToStart>0)
+    table.rows[k].cells[whereToStart-1].removeAttribute('style');
+    table.rows[k].cells[whereToStop].removeAttribute('style');
+  }
   whereToStart = 0;
   whereToStop  = table.rows[0].cells.length-1;
-  for(j=0;j<whereToStop;j++)
-    for (var k = 0; k < chordNum; k++)
-    {
-      table.rows[k].cells[j].removeAttribute('style');
-    }
 
 }
 
@@ -771,8 +851,17 @@ function clearTable()
     DO:
       清空所有表格
   */
-   clear();
-    createTable();
+    clear();
+    Swal.fire({
+          title: '確定清空?',
+          type: 'warning',
+          background: ' url(../resources/label.jpg)',
+          padding: '3em',
+          showCancelButton:true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes',
+         }).then((result) =>{if(result.value)createTable();})
     // if(player)
     //   playStop();
 }
@@ -801,18 +890,17 @@ function run(data)
 {
   var scrollCount = (whereToStart-16)*46;
   var pageCount = 1;
-  var start;
   var count = 0;
   playing = true;
   if(!data)
   {
     j = whereToStart;
-    start = whereToStart;
+    tickToPlay = whereToStart;
   }
   else
   {
     j = resumeTick;
-    start = resumeTick;
+    tickToPlay = resumeTick;
     var scrollCount = (resumeTick-16)*46;
   }
 
@@ -831,21 +919,22 @@ function run(data)
 
   function frame()
   {
-    if(start <= whereToStop)
+    j = tickToPlay;
+    scrollCount = (tickToPlay-16) * 46;
+    if(tickToPlay <= whereToStop)
     {
       for(;count<chordNum;count++)
       {
-          var notett = table.children[count].children[0].children[start].innerText.substring(6,22).split(",");
-          if(notett != "")
+          var noteForPlay = table.children[count].children[0].children[tickToPlay].innerText.substring(6,18).split(",");
+          if(noteForPlay != "")
           {
-            port.note(0,notett[0],notett[3],(60 / BPMval) * 250 *(notett[2]/24)-10);
-        // console.log(notett);
+            port.note(0,noteForPlay[0],60,((60 / BPMval) * 250 *(noteForPlay[2]/24)-10));
           }
       }
     }
     else
     {
-      start = whereToStart-1;
+      tickToPlay = whereToStart-1;
       clearTimeout(idOfSetInterval);
       clearTimeout(idOfSetInterval2);
       scrollCount = (whereToStart-16)*46;
@@ -853,9 +942,8 @@ function run(data)
       if(j<0)
         j=0;
     }
-    start++;
+    tickToPlay++;
     count=0;
-    scrollCount += 46;
     pageCount++;
     if(followControl == 1)
     {
@@ -897,21 +985,6 @@ function run(data)
     }
     idOfSetInterval2 = setTimeout(frame, (60 / BPMval) * 250);
   }
-}
-
-
-function mouseToChoose()                //變換鼠標樣式
-{
-  /*
-    DO:
-       更改鼠標樣式
-
-       選取範圍時變為Pointer
-  */
-  if($('#select').val()=='選取')
-    $('body').css('cursor','pointer');
-  else
-    $('body').css('cursor','default');
 }
 
 function changeTone()
@@ -970,7 +1043,6 @@ function importExample()
                               await changeText();
                               createImport(JZZ.lib.fromBase64($('#importExample').val()));
                             };
-
                            myimport();
 
                         }
@@ -989,34 +1061,19 @@ $(function()
         設置背景大小
         防止誤觸關閉
   */
+  $('body').attr('ondrop','drop(event)');
+  $('body').attr('ondragover','allowDrop(event)');
+  $('body').attr('ondragend','dragEnd(event)');
+
   $(window).bind('beforeunload', function (e) {
                 return '';
         });
+
   $(window).resize(function(e)
   {
     clientWidth = document.body.clientWidth;
   }).resize();
 
-  $(document).keypress(function(e){
-
-    if(e.keyCode == 32 &&　playnotebtn.disabled == false)
-    {
-      fromBase64();
-    }
-    else  if(e.keyCode == 32 && playnotebtn.disabled == true)
-    {
-      playStop();
-      playnotebtn.disabled = false;
-      clearnotebtn.disabled = false;
-      pausenotebtn.disabled = true;
-      rerunnotebtn.disabled = true;
-    }
-  });
-
-
-  $('body').attr('ondrop','drop(event)');
-  $('body').attr('ondragover','allowDrop(event)');
-  $('body').attr('ondragend','dragEnd(event)');
 
 });
 
@@ -1029,9 +1086,64 @@ document.addEventListener('DOMContentLoaded', function (event)
     document.body.style.zoom = 'reset';
     document.addEventListener('keydown', function (event)
     {
-      if ((event.ctrlKey === true)  && (event.keyCode === 17 || event.keyCode === 107 || event.keyCode === 109 || event.keyCode === 187  || event.keyCode === 189))
+      if(!(47<event.keyCode && event.keyCode<58) && !(95<event.keyCode && event.keyCode<106)  && !(36<event.keyCode && event.keyCode<41) && !(event.keyCode == 8)   && !(event.keyCode==46))
+      event.preventDefault();
+      if(event.keyCode == 13)   //enter   back to postition of wheretostart
       {
-         event.preventDefault();
+
+        $('#scrolltable').scrollLeft((whereToStart-16)*46);
+      }
+      else if(event.keyCode == 80)   // p   pause playing
+      {
+        if(playing)
+          playPause();
+      }
+      else if(event.keyCode == 32 &&　playnotebtn.disabled == false)   //space  play or continue to play
+      {
+        if(resume)
+          continuePlay();
+        else
+          playSong();
+      }
+      else if(event.keyCode == 32 && playnotebtn.disabled == true)    //space  strop playing
+      {
+        playStop();
+      }
+      else if(event.keyCode == 70)   // f follow mode
+      {
+        $('#follow').val("自動");
+        followControl = 1;
+      }
+      else if(event.keyCode == 72)  // h hand mode
+      {
+
+        $('#follow').val("手動");
+        followControl = 0;
+      }
+      else if(event.keyCode == 83)  // S hand mode
+      {
+
+        $('#follow').val("分頁");
+        followControl = 2;
+      }
+      else if(event.keyCode == 69)  // e  edit note
+      {
+        $('#select').val('編輯');
+        mycursor = cursortype.default;
+      }
+      else if (event.keyCode == 82)   // r select range
+      {
+        $('#select').val('選取');
+        mycursor = cursortype.pointer;
+      }
+      else if (event.keyCode == 67)  // c clear table
+      {
+        if(!playing)
+        clearTable();
+      }
+      else if (event.keyCode == 116)   //f5
+      {
+        location.reload();
       }
     }, false);
     document.addEventListener('mousewheel', function (event)
@@ -1041,5 +1153,5 @@ document.addEventListener('DOMContentLoaded', function (event)
         event.preventDefault();
         return false;
       }
-    }, {passive : false});
+    }, {passive : false });
 }, false);

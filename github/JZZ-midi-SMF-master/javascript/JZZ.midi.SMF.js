@@ -120,7 +120,7 @@
       var len = (s.charCodeAt(p + 4) << 24) + (s.charCodeAt(p + 5) << 16) + (s.charCodeAt(p + 6) << 8) + s.charCodeAt(p + 7);
       p += 8;
       var data = s.substr(p, len);
-      this.push(new Chunk(type, data));
+      this.push(new Chunk(type, data)); 
       p += len;
     }
     if (n != this.ntrk) _error('Corrupted MIDI file');

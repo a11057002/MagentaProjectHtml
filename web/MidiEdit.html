@@ -15,7 +15,7 @@
 <body onload="createTable()">
   <div style=" width: 98%;color:white; position:absolute; top:5%; margin-top:-30px;" id=tools>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    速度:<input class="tool-btn" type="text" name="BPM_val" style="text-align:center;width:50px;margin-right: 5px;margin-left: 5px;" value="50">bpm
+    速度:<input class="tool-btn" type="number" name="BPM_val" style="text-align:center;width:50px;margin-right: 5px;margin-left: 5px;" value="50">bpm
     &nbsp;
     音色:
     <select class="tool-btn" id='tone' value='音色切換' onchange="changeTone()">
@@ -80,11 +80,12 @@
     <br>
 
     &nbsp;
-    <input class="tool-btn" id="btn" type="button" value="播放" onclick="fromBase64()" style="width:100px; margin-top:15px;margin-left:20px;" >
+    <input class="tool-btn" id="btn" type="button" value="播放" onclick="playSong()" style="width:100px; margin-top:15px;margin-left:20px;" >
     <input class="tool-btn" id="btn2" type="button" value="暫停" onclick="playPause()" style="width:100px;">
     <input class="tool-btn" id="btn3" type="button" value="停止" onclick="playStop()" style="width:100px;">
     <input class="tool-btn" id="btn4" type="button" value="清除全部音符" onclick="clearTable()" style="width:100px;">
     <input class="tool-btn" id="btn5" type="button" value="清除選取範圍" onclick="clearRange()" style="width:100px;">
+    <input class="tool-btn" id="uploadButton" value="上傳" type="button" onclick="upLoad()">
 
   </div>
   <div id="maintable" style="overflow-x:hidden;overflow-y:auto;position:fixed; height:84%;top:8%;">
@@ -114,11 +115,6 @@
 // self.addEventListener('message', function(e) {
 //   console.log(e.data);
 // }, false);
-// var iii = 0;
-//
-//  setInterval(function(){iii = iii + 1;self.postMessage(iii + " / 54");},100);
-// }
-
 // var worker = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"])));
 // var worker = new Worker('../js/worker.js');
 // document.addEventListener("DOMContentLoaded", function()
@@ -146,12 +142,6 @@
     appId: "1:134118203853:web:a625b0ca239dfecf"
   };
   firebase.initializeApp(firebaseConfig);
-  // var storage = firebase.storage();
-  // storage.ref().child('midi/Ninelie.mid').getDownloadURL().then(
-  //   function(url)
-  //   {
-  //     document.getElementById('fire').href = url;
-  //   });
   var firestore = firebase.firestore();
   firestore.collection('midi').get().then(
     snap =>
@@ -163,6 +153,12 @@
         });
     }
     );
+  // var storage = firebase.storage();
+  // storage.ref().child('midi/Ninelie.mid').getDownloadURL().then(
+  //   function(url)
+  //   {
+  //     document.getElementById('fire').href = url;
+  //   });
 
 </script>
 </html>

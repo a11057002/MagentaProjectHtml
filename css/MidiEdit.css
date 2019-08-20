@@ -103,9 +103,19 @@ body {
   outline-color: rgba(255, 255, 255, .5);
    outline-offset: 5px;
 }
+.tool-btn:disabled
+{
+  background-color: rgba(0,0,0,0.1);
+  color:white;
+}
 .tool-btn[id=export]
 {
   float: right;
+}
+
+.tool-btn[id=uploadButton]
+{
+    float:right;
 }
 
 ::-webkit-scrollbar-track
