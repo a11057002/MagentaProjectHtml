@@ -126,12 +126,22 @@
 </script>
 <script src="../js/MidiEdit.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.5/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-storage.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
 
 
 <script>
+
+  // var admin = require("firebase-admin");
+
+  // var serviceAccount = require('../firebase.json');
+
+  // admin.initializeApp({
+  //   credential: admin.credential.cert(serviceAccount),
+  //   databaseURL: "https://magentahtml.firebaseio.com"
+  // });
   var firebaseConfig = {
     apiKey: "AIzaSyCHyjbrzjYzwdZPWek3AYBiBZpqNqfpXug",
     authDomain: "magentahtml.firebaseapp.com",
@@ -141,7 +151,14 @@
     messagingSenderId: "134118203853",
     appId: "1:134118203853:web:a625b0ca239dfecf"
   };
+ 
   firebase.initializeApp(firebaseConfig);
+  firebase.auth().signInAnonymously().catch(function(error) {
+  // Handle Errors here.
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  // ...
+}); 
   var firestore = firebase.firestore();
   firestore.collection('midi').get().then(
     snap =>

@@ -17,9 +17,27 @@
   <body>
 
 
-      <div align='center' style='width:99%; top:15%; position:absolute;'>
-
+      <div align='center' style='width:99%; top:15%;position:absolute;'>
+        <image src='../resources/helpPage.png' style='width: 50%;height:70%'></image>
       </div>
 
   </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', function (event)
+    {
+    document.addEventListener('keydown', function (event)
+    {
+      if((event.keyCode == 107) || (event.keyCode==109))
+      event.preventDefault();
+    }, false);
+    document.addEventListener('mousewheel', function (event)
+    {
+      if (event.ctrlKey === true)
+      {
+        event.preventDefault();
+        return false;
+      }
+    }, {passive : false });
+}, false);
+  </script>
 </html>

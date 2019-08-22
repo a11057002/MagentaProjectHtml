@@ -588,6 +588,12 @@ function upLoad()
     title:'請輸入上傳密碼!',
     input:'text',
     showCancelButton: true,
+    backdrop: `url("../resources/ball.gif")
+               rgba(0,0,150,0.4)
+               center left
+               no-repeat
+              `
+
   }).then((result)=>
     {
       if(result.value)
@@ -626,7 +632,8 @@ function upLoad()
                   Swal.fire(
                   {
                     title:"密碼錯誤",
-                    type:'error'
+                    type:'error',
+                    backdrop:`rgba(100,0,0,0.4)`
                   });
                  }
 
@@ -861,6 +868,7 @@ function clearTable()
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
           confirmButtonText: 'Yes',
+          backdrop:`rgba(100,0,0,0.4)`
          }).then((result) =>{if(result.value)createTable();})
     // if(player)
     //   playStop();
@@ -1027,8 +1035,13 @@ function importExample()
                                   return new Promise(function(resolve,reject){
                                   Swal.fire({
                                     title:"Importing",
-                                    background: ' url(../resources/label.jpg)',
+                                    background: 'url(../resources/label.jpg)',
                                     showConfirmButton: false,
+                                    backdrop: `rgba(100,0,100,0.4)
+                                               url("../resources/dove.gif")
+                                               center left
+                                               no-repeat
+                                              `,
                                     onBeforeOpen:() =>{
                                     Swal.showLoading();
                                     }
