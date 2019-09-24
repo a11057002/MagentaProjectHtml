@@ -752,7 +752,7 @@ function createImport(data)
   var trackSum = (mysmf.toString().split("MTrk:")[0]).split("tracks:")[1];      //tracks 總數
   var tracksString = "";
   var trackArray = new Array(trackCount);
-  for (var  trackCount= 0; trackCount< trackSum;trackCount++)
+  for (var  trackCount= 1; trackCount< trackSum;trackCount++)
   {
     tracksString += "<h3><input type='checkbox' id= 'trk"+ trackCount +"' ></input> track " + trackCount + " </h3><br>";
     trackArray[trackCount] = 0;
@@ -761,7 +761,7 @@ function createImport(data)
     title: "Choose the tracks to input",
     html: tracksString,
     preConfirm: ()=>{
-      for(var  trackCount= 0; trackCount< trackSum;trackCount++)
+      for(var  trackCount= 1; trackCount< trackSum;trackCount++)
       {
           if(document.getElementById('trk'+trackCount).checked)
             trackArray[trackCount] = 1;
@@ -843,27 +843,6 @@ function mouseToChoose()
   mycursor = cursortype.default;
 }
 
-function chooseTrack()
-{
-  Swal.fire({
-          title: 'Particularidade',
-          html: '<h3>Alcool <input type="checkbox" id="trk1"  /></h3><p/>' +
-                '<h3>Cigarro <input type="checkbox" id="trk2"  /></h3>',
-          confirmButtonText: 'confirmar',
-          preConfirm: () => {
-            var alcool = Swal.getPopup().querySelector('#alcool').checked
-            var cigarro = Swal.getPopup().querySelector('#cigarro').checked
-            console.log("Alcool = " + alcool + " Cigarro = "+ cigarro)
-
-
-            return {alcool: alcool, cigarro: cigarro}
-          }
-        }).then((result) => {
-          Prescricao.usoAlcoolica = result.value.alcool
-          Prescricao.usoCigarro = result.value.cigarro
-          Swal.fire(`Babe?: ${result.value.alcool}\nFuma?: ${result.value.cigarro}`)
-        })
-}
 
 function changeTone()
 {
