@@ -581,7 +581,7 @@ function upLoad()
 
   /*
     DO:
-        上傳輸入密碼    
+        上傳輸入密碼
         輸入檔案名稱
   */
   Swal.fire({
@@ -618,7 +618,7 @@ function upLoad()
                                         firestore.collection('midi').doc(result.value).set(
                                           {
                                             'b64': b64
-                                          }); 
+                                          });
                                         Swal.fire(
                                           {
                                             title:"上傳成功(重整後可看到)",
@@ -638,7 +638,7 @@ function upLoad()
                  }
 
             })
-        });                                       
+        });
     });
 
 }
@@ -732,9 +732,8 @@ function createImport(data)
   createTable();
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
   // worker.postMessage(mysmf.toString());
-  console.log(mysmf);
-  console.log(mysmf.toString().split(" "));
-  console.log(JZZ.lib.toBase64(mysmf.dump()));
+  // console.log(mysmf);
+  console.log(mysmf.toString());
   var inputNoteString;
   var inputVolumeString;
   var maxTick = 0;
@@ -747,11 +746,30 @@ function createImport(data)
   });
   console.log(maxTick);
   addtable(maxTick/4); //增加全部table
-  var i = 0;                                                              //track數量
+  var i = 0;                                                              //目前匯入track數量
   var mysmfTick = 0;                                                      //存目前到第幾個tick
   $("input[name='BPM_val']").val(mysmf.toString().split(" ")[(mysmf.toString().split(" ").indexOf("Tempo:")) + 1]);     //將BPM放入左上
-  $.each(mysmf, function()
-  {                                                                                                                           //對每個track做動作
+  var trackSum = (mysmf.toString().split("MTrk:")[0]).split("tracks:")[1];      //tracks 總數
+  var tracksString = "";
+  var trackArray = new Array(trackCount);
+  for (var  trackCount= 0; trackCount< trackSum;trackCount++)
+  {
+    tracksString += "<h3><input type='checkbox' id= 'trk"+ trackCount +"' ></input> track " + trackCount + " </h3><br>";
+    trackArray[trackCount] = 0;
+  }
+  Swal.fire({
+    title: "Choose the tracks to input",
+    html: tracksString,
+    preConfirm: ()=>{
+      for(var  trackCount= 0; trackCount< trackSum;trackCount++)
+      {
+          if(document.getElementById('trk'+trackCount).checked)
+            trackArray[trackCount] = 1;
+      }
+    }
+  }).then((result)=> {$.each(mysmf, function()
+  {
+    console.log(trackArray);                                                                                              //對每個track做動作
     var smfSplitString = mysmf[i].toString().split("\n");                                                                     //將每個 動作切開
     var j = 0;
     var ticktemp = "";
@@ -760,8 +778,16 @@ function createImport(data)
     inputNoteString = new Array(84);
     inputVolumeString = new Array(84);                                                                                                                      //紀錄每個track 音符數
       $.each(smfSplitString, function()
-      {                                                                                                                       //對每個動作分析
-      ticktemp = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":"));                                              //存目前tick
+      {                                                                             //對每個動作分析
+
+        // if(smfSplitString[j].includes("Program") && !smfSplitString[j].includes("21"))     最後手段
+        // {
+        //   return;
+        // }
+        if(trackArray[i]==0)
+          return;
+
+        ticktemp = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":"));                                              //存目前tick
 
       if (mysmfTick != ticktemp && !isNaN(ticktemp))
       {                                                                                                                       //當目前tick不等於這個音符之tick   tick是否為數字
@@ -796,14 +822,15 @@ function createImport(data)
   });
   start();
   Swal.fire(
-  {
-    type: 'success',
-    background: ' url(../resources/label.jpg)',
-    title:"匯入完成"
-  });
+    {
+      type: 'success',
+      background: ' url(../resources/label.jpg)',
+      title:"匯入完成"
+    });
+});
 }
 
-function mouseToChoose()                
+function mouseToChoose()
 {
   /*
   DO:
@@ -814,6 +841,28 @@ function mouseToChoose()
   mycursor = cursortype.pointer;
   else
   mycursor = cursortype.default;
+}
+
+function chooseTrack()
+{
+  Swal.fire({
+          title: 'Particularidade',
+          html: '<h3>Alcool <input type="checkbox" id="trk1"  /></h3><p/>' +
+                '<h3>Cigarro <input type="checkbox" id="trk2"  /></h3>',
+          confirmButtonText: 'confirmar',
+          preConfirm: () => {
+            var alcool = Swal.getPopup().querySelector('#alcool').checked
+            var cigarro = Swal.getPopup().querySelector('#cigarro').checked
+            console.log("Alcool = " + alcool + " Cigarro = "+ cigarro)
+
+
+            return {alcool: alcool, cigarro: cigarro}
+          }
+        }).then((result) => {
+          Prescricao.usoAlcoolica = result.value.alcool
+          Prescricao.usoCigarro = result.value.cigarro
+          Swal.fire(`Babe?: ${result.value.alcool}\nFuma?: ${result.value.cigarro}`)
+        })
 }
 
 function changeTone()
