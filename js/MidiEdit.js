@@ -471,7 +471,7 @@ function clear()
   playing = false;
 }
 
-// function load(data, name)
+// function load(data, name)     以前的播放
 // {
 //   /*
 //     Args:
@@ -507,24 +507,25 @@ function playStop()
   /*
     DO:
         播放音樂
+        進度條清除
   */
-  // player.stop();
   playing = false;
   resume = false;
   playnotebtn.innerHTML = "Play";
   playnotebtn.setAttribute("onclick", "playSong()");
-      clearTimeout(idOfSetInterval);
-      clearTimeout(idOfSetInterval2);
-        for (var i = 0; i < chordNum; i++)
-        {
-           if(whereToStart>0)
-           table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
-           table.rows[i].cells[resumeTick-1].removeAttribute('style');
-        }
-      playnotebtn.disabled = false;
-      clearnotebtn.disabled = false;
-      pausenotebtn.disabled = true;
-      rerunnotebtn.disabled = true;
+  clearTimeout(idOfSetInterval);
+  clearTimeout(idOfSetInterval2);
+  for (var i = 0; i < chordNum; i++)
+  {
+      if(whereToStart>0)
+          table.rows[i].cells[whereToStart-1].style.borderRightColor = 'red';
+      if(resumeTick>0)
+          table.rows[i].cells[resumeTick-1].removeAttribute('style');
+  }
+  playnotebtn.disabled = false;
+  clearnotebtn.disabled = false;
+  pausenotebtn.disabled = true;
+  rerunnotebtn.disabled = true;
 }
 
 function playPause()
@@ -533,7 +534,6 @@ function playPause()
     DO:
         暫停播放
   */
-  // player.pause();
   playing = false;
   resume = true;
   playnotebtn.setAttribute("onclick", "continuePlay()");
@@ -570,9 +570,6 @@ function playSong() //轉為b64格式
   */
   clear();
   run(0);
-  // addnote();
-  // createSMF();
-  // load(JZZ.lib.fromBase64(b64), 'Base64 data');
 }
 
 
@@ -581,7 +578,7 @@ function upLoad()
 
   /*
     DO:
-        上傳輸入密碼
+        上傳輸入密碼 
         輸入檔案名稱
   */
   Swal.fire({
@@ -649,21 +646,24 @@ function exportMidi()
     DO:
         匯出
   */
-  var mypromise = function(){
-      return new Promise(function(resolve,reject){
+  var mypromise = function()
+  {
+    return new Promise(function(resolve,reject)
+    {
         addnote();
         createSMF();
         setTimeout(function()
         {
           resolve();
         },100);
-      })
-    };
+    });
+  };
 
-    var myexport = async function(){
+  var myexport = async function()
+  {
       await mypromise();
       location.href = uri;
-    }
+  }
   myexport();
 }
 
@@ -687,8 +687,10 @@ function importMidi()
       {
         data += String.fromCharCode(bytes[i]);
       }
-      var changeText = function(){
-          return new Promise(function(resolve,reject){
+      var changeText = function()
+      {
+        return new Promise(function(resolve,reject)
+        {
             Swal.fire({
                         title:"Importing " + f.name,
                         showConfirmButton: false,
@@ -698,17 +700,18 @@ function importMidi()
                           Swal.showLoading();
                         }
                      })
-            setTimeout(function(){
+            setTimeout(function()
+            {
               resolve();
             },10)
-          })
+        })
       };
 
-      var myimport = async function(){
+      var myimport = async function()
+      {
         await changeText();
         createImport(data);
       };
-
       myimport();
     };
     reader.readAsArrayBuffer(f);
@@ -723,7 +726,7 @@ function createImport(data)
           Data: midi黨
     DO:
           匯入midi黨
-
+          選擇匯入軌道
           清除目前播放
           新建音符表格
           將新的檔案以mysmf製作音源
@@ -731,95 +734,94 @@ function createImport(data)
   clear();                                                                //清除正在播放
   createTable();
   var mysmf = new JZZ.MIDI.SMF(data);                                     //建立新的SMF  放data進入
-  // worker.postMessage(mysmf.toString());
-  // console.log(mysmf);
-  console.log(mysmf.toString());
   var inputNoteString;
   var inputVolumeString;
   var maxTick = 0;
-  string = "";
-  myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
-  $.each(mysmf,function(e){
-    var temp = Math.ceil(mysmf[e].toString().split("\n")[mysmf[e].toString().split("\n").length-1].split(":")[0]/(myppqn/96)/16/24-3);
-    if(temp > maxTick)
-        maxTick = temp;
-  });
-  console.log(maxTick);
-  addtable(maxTick/4); //增加全部table
-  var i = 0;                                                              //目前匯入track數量
+  var currentTrackNum = 0;                                                              //目前匯入track數量
   var mysmfTick = 0;                                                      //存目前到第幾個tick
+  var trackSum = (mysmf.toString().split("MTrk:")[0]).split("tracks:")[1];//tracks 總數
+  var tracksString = "";                                                  //存軌道字串      
+  var trackArray = new Array(trackCount);                                 //存軌道是否匯入 0-false 1-true
+  myppqn = mysmf.ppqn;                                                    //把現在ppqn存在全域變數
+  $.each(mysmf,function(e)
+  {                                                                       //計算最大軌道長度
+      var temp = Math.ceil(mysmf[e].toString().split("\n")[mysmf[e].toString().split("\n").length-1].split(":")[0]/(myppqn/96)/16/24-3);
+      if(temp > maxTick)
+          maxTick = temp;
+  });
+  addtable(maxTick/4);                                                    //增加全部table
   $("input[name='BPM_val']").val(mysmf.toString().split(" ")[(mysmf.toString().split(" ").indexOf("Tempo:")) + 1]);     //將BPM放入左上
-  var trackSum = (mysmf.toString().split("MTrk:")[0]).split("tracks:")[1];      //tracks 總數
-  var tracksString = "";
-  var trackArray = new Array(trackCount);
-  for (var  trackCount= 1; trackCount< trackSum;trackCount++)
+  for (var  trackCount= 1; trackCount< trackSum;trackCount++)             //初始化 
   {
     tracksString += "<h3><input type='checkbox' id= 'trk"+ trackCount +"' ></input> track " + trackCount + " </h3><br>";
     trackArray[trackCount] = 0;
   }
   Swal.fire({
-    title: "Choose the tracks to input",
-    html: tracksString,
-    preConfirm: ()=>{
-      for(var  trackCount= 1; trackCount< trackSum;trackCount++)
-      {
-          if(document.getElementById('trk'+trackCount).checked)
-            trackArray[trackCount] = 1;
-      }
-    }
-  }).then((result)=> {$.each(mysmf, function()
-  {
-    console.log(trackArray);                                                                                              //對每個track做動作
-    var smfSplitString = mysmf[i].toString().split("\n");                                                                     //將每個 動作切開
-    var j = 0;
-    var ticktemp = "";
-    var note = "";
-    var volume = "";
-    inputNoteString = new Array(84);
-    inputVolumeString = new Array(84);                                                                                                                      //紀錄每個track 音符數
-      $.each(smfSplitString, function()
-      {                                                                             //對每個動作分析
+                title: "Choose the tracks to input",
+                html: tracksString,
+                preConfirm: ()=>
+                {
+                  for(var  trackCount= 1; trackCount< trackSum;trackCount++)
+                  {
+                     if(document.getElementById('trk'+trackCount).checked)
+                     trackArray[trackCount] = 1;
+                  }
+                }
+            }).then(()=>{   
+                          Swal.fire({
+                                      title:"Importing ",
+                                      showConfirmButton: false,
+                                      background: ' url(../resources/label.jpg)',
+                                      onBeforeOpen:() =>
+                                      {
+                                        Swal.showLoading();
+                                      }
+                                    })
+                        }).then(()=>{$.each(mysmf, function()                                                //對每個track做動作 
+                        {                                                       
+                          var smfSplitString = mysmf[currentTrackNum].toString().split("\n");                                      //將每個 動作切開
+                          var splitStringNum = 0;
+                          var ticktemp = "";
+                          var note = "";
+                          var volume = "";
+                          inputNoteString = new Array(84);
+                          inputVolumeString = new Array(84);                                                                                                                      //紀錄每個track 音符數
+                            $.each(smfSplitString, function()
+                            {                                                                                                      //對每個動作分析
+                              if(trackArray[currentTrackNum]==0)
+                                return;
 
-        // if(smfSplitString[j].includes("Program") && !smfSplitString[j].includes("21"))     最後手段
-        // {
-        //   return;
-        // }
-        if(trackArray[i]==0)
-          return;
+                              ticktemp = smfSplitString[splitStringNum].substring(2, smfSplitString[splitStringNum].indexOf(":")); //存目前tick
 
-        ticktemp = smfSplitString[j].substring(2, smfSplitString[j].indexOf(":"));                                              //存目前tick
+                            if (mysmfTick != ticktemp && !isNaN(ticktemp))
+                            {                                                                                                      //當目前tick不等於這個音符之tick   tick是否為數字
+                              mysmfTick = ticktemp;                                                                                //現在tick等於後來tick
+                            }
+                            var mySplitString = smfSplitString[splitStringNum].substring(smfSplitString[splitStringNum].indexOf("--") + 3, smfSplitString[splitStringNum].indexOf("--") + 10);
+                            note = parseInt(smfSplitString[splitStringNum].substring(smfSplitString[splitStringNum].indexOf(":") + 2, smfSplitString[splitStringNum].indexOf("-") - 1).split(" ")[1], 16);
+                            volume = parseInt(smfSplitString[splitStringNum].substring(smfSplitString[splitStringNum].indexOf(":") + 2, smfSplitString[splitStringNum].indexOf("-") - 1).split(" ")[2], 16);
+                            if (mySplitString === "Note On")                                                                       //當指令note on
+                            {
+                              inputNoteString[note] = mysmfTick;
+                              inputVolumeString[note] = volume;
 
-      if (mysmfTick != ticktemp && !isNaN(ticktemp))
-      {                                                                                                                       //當目前tick不等於這個音符之tick   tick是否為數字
-        mysmfTick = ticktemp;                                                                                                 //現在tick等於後來tick
-      }
-
-      var mySplitString = smfSplitString[j].substring(smfSplitString[j].indexOf("--") + 3, smfSplitString[j].indexOf("--") + 10);
-      note = parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[1], 16);
-      volume = parseInt(smfSplitString[j].substring(smfSplitString[j].indexOf(":") + 2, smfSplitString[j].indexOf("-") - 1).split(" ")[2], 16);
-      if (mySplitString === "Note On")                                                                                         //當指令note on
-      {
-        inputNoteString[note] = mysmfTick;
-        inputVolumeString[note] = volume;
-
-      }
-      else if (mySplitString === "Note Of")                                                                                  //當指令為note off
-      {
-        var calculateTick = Math.round((mysmfTick-inputNoteString[note])/(24*myppqn/96));
-        var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",0x60, "+ parseInt(24*calculateTick) +"  )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
-        if ((-note + 95) > -1)                                                                                                  //音符不得<0
-        {
-            var mytempnote = document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))];
-            mytempnote.innerHTML = addNoteString;
-            mytempnote.children[0].style.width = 40*calculateTick + 6*(calculateTick-1);
-        }
-      }
-      // console.log(j+"/" + smfSplitString.length);
-      j++;
-    });
-    i++;
-    mysmfTick = 0;                                    //重設 讓下一個track用
-  });
+                            }
+                            else if (mySplitString === "Note Of")                                                                  //當指令為note off
+                            {
+                              var calculateTick = Math.round((mysmfTick-inputNoteString[note])/(24*myppqn/96));
+                              var addNoteString = "<div class='createnote' ondragstart = 'dragStart(event)' draggable='true' >.note(" + note + ",0x60, "+ parseInt(24*calculateTick) +"  )</div>";                                                                                                                 //依據中間三個數值的第一個數值 將16進位轉10進位 音量設為64
+                              if ((-note + 95) > -1)                                                                               //音符不得<0
+                              {
+                                  var mytempnote = document.getElementsByName(note)[0].children[parseInt(inputNoteString[note] / (24 * (myppqn / 96)))];
+                                  mytempnote.innerHTML = addNoteString;
+                                  mytempnote.children[0].style.width = 40*calculateTick + 6*(calculateTick-1);
+                              }
+                            }
+                            splitStringNum++;
+                          });
+                          currentTrackNum++;
+                          mysmfTick = 0;                                                                                           //重設 讓下一個track用
+                        });
   start();
   Swal.fire(
     {
@@ -924,6 +926,10 @@ function follow()
 
 function run(data)
 {
+  /*
+    DO:
+      播放
+  */
   var scrollCount = (whereToStart-16)*46;
   var pageCount = 1;
   var count = 0;
