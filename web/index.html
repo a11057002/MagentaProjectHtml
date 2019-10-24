@@ -44,8 +44,20 @@
       </script>
       <!-- <p><input type=file id=file size=80 onchange='fromFile()'></p>
       <p><button id='btn' onclick='playStop()' disabled>Play</button></p> -->
+	  <input style="z-index:10000" type='button' value = "產生音樂" onclick="executeBash()">
    </div>
-
+<script>
+	function executeBash()
+		{
+					  $.ajax({
+							  	  url: "/button/",
+								  	  type: "POST",
+									  	  success: function(msg){
+												  		location.href = "button";
+															  }
+															  	  });
+					  	}
+						  </script>
 
   </body>
 </html>
