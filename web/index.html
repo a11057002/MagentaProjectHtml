@@ -6,14 +6,14 @@
 <script src="../github/JZZ-midi-SMF-master/javascript/JZZ.midi.SMF.js"></script>
 <script src="../github/JZZ-synth-Tiny-master/javascript/JZZ.synth.Tiny.js"></script>
 <script src="../github/JZZ-gui-Player-master/javascript/JZZ.gui.Player.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 <style type="text/css">
   body {
     color: white;
     background-color: rgba(0, 0, 0, 1);
   }
 
-  div,h1 {
+  .generator {
     position: fixed;
     text-align: center;
   }
@@ -30,12 +30,13 @@
     </script>            <!--底下bar-->
 
   <body>
-    <div style="width:99%;height:20%;">
+    <div class="generator" style="width:99%;height:20%;">
       <span style="font-size:3em">音樂產生器</span>
       <br><br>
             <script>
             JZZ.synth.Tiny.register('Web Audio');
             var player1 = new JZZ.gui.Player({at: 'player', midi: false , file :true});
+            player1.gui.setAttribute("class","generator");
             </script>
       
       <a id="wav">檔案下載位置</a>
@@ -45,19 +46,30 @@
       <!-- <p><input type=file id=file size=80 onchange='fromFile()'></p>
       <p><button id='btn' onclick='playStop()' disabled>Play</button></p> -->
 	  <input style="z-index:10000" type='button' value = "產生音樂" onclick="executeBash()">
-   </div>
-<script>
-	function executeBash()
-		{
-					  $.ajax({
-							  	  url: "/button/",
-								  	  type: "POST",
-									  	  success: function(msg){
-												  		location.href = "button";
-															  }
-															  	  });
-					  	}
-						  </script>
+    </div>
+    <script>
+      function executeBash()
+        {
+          
+          Swal.fire({
+              title:"產生音樂中:)",
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              onBeforeOpen:() =>
+                        {
+                          Swal.showLoading();
+                          var outputPromise = new Promise(function(resolve,reject)
+                            {
+                              location.href="./output.zip";
+                              setTimeout(function(){resolve()},30000);   //not the best solution
+                            
+                            });
+                      
+                          outputPromise.then(function(){Swal.close();})
+                        }
+          });
+        }
+    </script>
 
-  </body>
+</body>
 </html>
