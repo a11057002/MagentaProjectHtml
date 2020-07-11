@@ -73,7 +73,7 @@ function createTable()
           生成完table後增加ClickEvent (start())
   */
   var row = table.rows.length;
-  var i, color, count = 8;
+  var i, color, count = 7;
   var noteString = "";
   var note = new Array("B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"); //音符陣列
   noteTable.innerHTML = "";
@@ -83,8 +83,8 @@ function createTable()
       color = "black";
     else
       color = "white";
-    noteTable.innerHTML += "<tr  id=" + (95 - i) + " onmousedown='playnote(this.id)'; onmouseup='stopnote(this.id)';><th class='" + color + "'>" + note[i % 12] + count + "</th></tr>"; //C3->60 D3->61
-    table.innerHTML += "<tr class='tt' name='" + (95 - i) + "'><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+    noteTable.innerHTML += "<tr  id=" + (107 - i) + " onmousedown='playnote(this.id)'; onmouseup='stopnote(this.id)';><th class='" + color + "'>" + note[i % 12] + count + "</th></tr>"; //C3->60 D3->61
+    table.innerHTML += "<tr class='tt' name='" + (107 - i) + "'><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class='eight_td'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
     if (note[i % 12] == 'C') count--;
   }
   start();
@@ -96,7 +96,6 @@ function start()
   /*
     DO:
         新增ClickEvent並重設起始及結束位置
-
   */
   clickcontrol();
   whereToStart = 0;
@@ -120,7 +119,7 @@ function addtable(count)
     tablestring += tablenode + tablenode+ tablenode+ tablenode;
   }
   else {
-    tablestring +=tablenode;
+    tablestring += tablenode;
   }
   for(var i= 0; i <chordNum ; i++)
   {
@@ -1116,10 +1115,10 @@ $(function()
                 return '';
         });
 
-  $(window).resize(function(e)
-  {
-    clientWidth = document.body.clientWidth;
-  }).resize();
+  // $(window).resize(function(e)
+  // {
+  //   clientWidth = document.body.clientWidth;
+  // }).resize();
 
 
 });
